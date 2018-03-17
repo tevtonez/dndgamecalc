@@ -23,5 +23,5 @@ class mainIndexView(TemplateView):
     template_name = 'main/base.html'
 
 
-def index(request):
-    HttpResponse("hi there")
+# def index(request):
+#     HttpResponse("hi there")

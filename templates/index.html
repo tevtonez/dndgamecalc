@@ -5,4 +5,13 @@
   <div class="jumbotron">
     <p>This is the main page of the application.</p>
   </div>
+
+{% if request.user.is_authenticated %}
+    sksk
+{% endif %}
+  <div class="row">
+      <div class="col-sm-12">
+          <a href="#"><button class="btn btn-success">Start Game</button></a>
+      </div>
+  </div>
 {% endblock %}

@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from main.models import(
+    GamerCaracter,
+    WeaponLootItem
+)
+
+admin.site.register(GamerCaracter)
+admin.site.register(WeaponLootItem)
