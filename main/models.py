@@ -107,9 +107,15 @@ class WeaponLootItem(LootItem):
 
     def __str__(self):
         return ' '.join([
-            str(self.find_value(self.ITM_CONDS, self.item_condition)).capitalize(),
-            str(self.find_value(self.ITM_MATERS, self.item_material)).capitalize(),
-            str(self.find_value(self.WPN_NAMES, self.weapon_name)).capitalize(),
+            str(
+                self.find_value(self.ITM_CONDS, self.item_condition)
+            ).capitalize(),
+            str(
+                self.find_value(self.ITM_MATERS, self.item_material)
+            ).capitalize(),
+            str(
+                self.find_value(self.WPN_NAMES, self.weapon_name)
+            ).capitalize(),
             '(Damage',
             '+' + str(self.find_value(self.WPN_MODIFS, self.modificator)) + ')'
         ])
@@ -164,13 +170,30 @@ class ArmorLootItem(LootItem):
         if self.modificator_negative == 'na':
             obj_name_last_part = ')'
         else:
-            obj_name_last_part = ', Speed ' + str(self.find_value(self.ARM_MODIFS_NEGATIVE, self.modificator_negative)) + ')'
+            obj_name_last_part = ', Speed ' + \
+                str(
+                    self.find_value(
+                        self.ARM_MODIFS_NEGATIVE,
+                        self.modificator_negative)
+                ) + ')'
         return ' '.join([
-            str(self.find_value(self.ITM_CONDS, self.item_condition)).capitalize(),
-            str(self.find_value(self.ITM_MATERS, self.item_material)).capitalize(),
-            str(self.find_value(self.ARM_NAMES, self.armor_name)).capitalize(),
+            str(
+                self.find_value(self.ITM_CONDS, self.item_condition)
+            ).capitalize(),
+            str(
+                self.find_value(self.ITM_MATERS, self.item_material)
+            ).capitalize(),
+            str(
+                self.find_value(self.ARM_NAMES, self.armor_name)
+            ).capitalize(),
             '(Armor',
-            '+' + str(self.find_value(self.ARM_MODIFS_POSITIVE, self.modificator_positive)) + obj_name_last_part
+            '+' +
+            str(
+                self.find_value(
+                    self.ARM_MODIFS_POSITIVE,
+                    self.modificator_positive
+                )
+            ) + obj_name_last_part
         ])
 
     def find_value(self, choices, name):
