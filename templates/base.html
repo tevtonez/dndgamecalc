@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+{% load static from staticfiles %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+        {% load bootstrap3 %}
+        {% bootstrap_css %}
+        <script src="https:{% bootstrap_jquery_url %}"></script>
+        {% bootstrap_javascript %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+</head>
+<body>
+
+    {% include "topnavbar.html" %}
+
+    <div class="container">
+        {% block body_block %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

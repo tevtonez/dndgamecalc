@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="panel panel-default">
+        <div class="panel-body login-signup-panel">
+
+          <h1>Log In</h1>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input class="btn btn-info" type="submit" value="Log In">
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+Django
+django-bootstrap3
+django-common-helpers
+django-cron
+django-crispy-forms
+dj-database-url
+dj-static
+django-cron
+psycopg2
+uWSGI
+whitenoise
