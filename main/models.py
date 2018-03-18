@@ -4,8 +4,8 @@ from django.db import models
 from main.helpers.common import find_value
 
 
-class Caracter(models.Model):
-    """Main class for all caracters in the game."""
+class Character(models.Model):
+    """Main class for all characters in the game."""
 
     name = models.CharField(max_length=150)
     health = models.IntegerField()
@@ -14,18 +14,30 @@ class Caracter(models.Model):
     attack_range = models.IntegerField()
     speed = models.IntegerField()
 
+
+class GamerCharacter(Character):
+    """Main class for all characters in the game."""
+
+    gamer = models.BooleanField(default=True)
+    gamer_description = models.TextField(
+        max_length=1500,
+        default="Gamer character description..."
+    )
+
+    GAMER_RACE = (
+        ('hum', 'human'),
+        ('dwa', 'dwarf'),
+        ('elf', 'elf'),
+    )
+    gamer_race = models.CharField(
+        choices=GAMER_RACE,
+        default='hum',
+        max_length=3
+    )
+
     def __str__(self):
         """Object string representation."""
-        return ' '.join([
-            str(self.name),
-            str(self.id)
-        ])
-
-
-class GamerCaracter(models.Model):
-    """Main class for all caracters in the game."""
-
-    gamer = models.BooleanField()
+        return str(self.name)
 
 
 class LootItem(models.Model):
@@ -77,6 +89,9 @@ class LootItem(models.Model):
         max_length=3
     )
 
+    item_level = models.IntegerField(default=1)
+    item_dropped = models.BooleanField(default=False)
+
 
 class WeaponLootItem(LootItem):
     """Weapon class."""
@@ -97,22 +112,24 @@ class WeaponLootItem(LootItem):
     )
 
     WPN_MODIFS = (
-        ('0', '0'),  # broken
-        ('1', '1'),  # cracked
-        ('2', '2'),  # poor
-        ('3', '3'),  # normal
-        ('4', '4'),  # good
-        ('5', '5'),  # sharp
+        ('0', '0'),  # broken      (level I)
+        ('1', '1'),  # cracked     (level I)
+        ('2', '2'),  # poor        (level II)
+        ('3', '3'),  # normal      (level II)
+        ('4', '4'),  # good        (level III)
+        ('5', '5'),  # sharp       (level III)
     )
     modificator = models.CharField(
         choices=WPN_MODIFS,
         default='0',
         max_length=3)
 
+    WPN_BONUS_TO = (
+        ('at', 'attack'),
+        ('ra', 'range'),
+    )
     bonus_to = models.CharField(
-        choices=(
-            ('at', 'attack'),
-        ),
+        choices=WPN_BONUS_TO,
         default='at',
         max_length=2
     )
@@ -120,6 +137,9 @@ class WeaponLootItem(LootItem):
     def __str__(self):
         """Object string representation."""
         return ' '.join([
+            "Level " + str(
+                self.item_level
+            ),
             str(
                 find_value(self.ITM_CONDS, self.item_condition)
             ).capitalize(),
@@ -129,7 +149,9 @@ class WeaponLootItem(LootItem):
             str(
                 find_value(self.WPN_NAMES, self.weapon_name)
             ).capitalize(),
-            '(Attack',
+            '(' + str(
+                find_value(self.WPN_BONUS_TO, self.bonus_to)
+            ).capitalize(),
             '+' + str(find_value(self.WPN_MODIFS, self.modificator)) + ')'
         ])
 
@@ -149,12 +171,12 @@ class ArmorLootItem(LootItem):
     )
 
     ARM_MODIFS_POSITIVE = (
-        ('0', '0'),  # broken leather, broken steel
-        ('1', '1'),  # cracked leather
-        ('2', '2'),  # poor leather, cracked steel
-        ('3', '3'),  # normal leather, poor steel
-        ('4', '4'),  # good leather, normal steel
-        ('5', '5'),  # good steel
+        ('0', '0'),  # broken leather, broken steel     (level I)
+        ('1', '1'),  # cracked leather                  (level I)
+        ('2', '2'),  # poor leather, cracked steel      (level II)
+        ('3', '3'),  # normal leather, poor steel       (level II)
+        ('4', '4'),  # good leather, normal steel       (level III)
+        ('5', '5'),  # good steel                       (level III)
     )
     modificator_positive = models.CharField(
         choices=ARM_MODIFS_POSITIVE,
@@ -201,6 +223,9 @@ class ArmorLootItem(LootItem):
                         self.modificator_negative)
                 ) + ')'
         return ' '.join([
+            "Level " + str(
+                self.item_level
+            ),
             str(
                 find_value(self.ITM_CONDS, self.item_condition)
             ).capitalize(),
@@ -235,10 +260,11 @@ class TrinketLootItem(LootItem):
     )
 
     TRN_MODIFS_POSITIVE = (
-        ('0', '0'),  # broken
-        ('1', '1'),  # cracked
-        ('2', '2'),  # poor
-        ('3', '3'),  # normal
+        ('0', '0'),  # broken   (level I)
+        ('1', '1'),  # cracked  (level I)
+        ('2', '2'),  # poor     (level II)
+        ('3', '3'),  # normal   (level II)
+        ('4', '4'),  # good     (level III)
     )
     modificator_positive = models.CharField(
         choices=TRN_MODIFS_POSITIVE,
@@ -267,6 +293,9 @@ class TrinketLootItem(LootItem):
             )
         ).capitalize()
         return ' '.join([
+            "Level " + str(
+                self.item_level
+            ),
             str(
                 find_value(self.ITM_SIZES, self.item_size)
             ).capitalize(),

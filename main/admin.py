@@ -3,12 +3,12 @@ from django.contrib import admin
 
 from main.models import(
     ArmorLootItem,
-    GamerCaracter,
+    GamerCharacter,
     TrinketLootItem,
     WeaponLootItem,
 )
 
 admin.site.register(ArmorLootItem)
-admin.site.register(GamerCaracter)
+admin.site.register(GamerCharacter)
 admin.site.register(TrinketLootItem)
 admin.site.register(WeaponLootItem)
