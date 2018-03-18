@@ -1,4 +1,7 @@
+"""Models."""
+
 from django.db import models
+from main.helpers.common import find_value
 
 
 class Caracter(models.Model):
@@ -12,6 +15,7 @@ class Caracter(models.Model):
     speed = models.IntegerField()
 
     def __str__(self):
+        """Object string representation."""
         return ' '.join([
             str(self.name),
             str(self.id)
@@ -75,7 +79,7 @@ class LootItem(models.Model):
 
 
 class WeaponLootItem(LootItem):
-    """Weapon class"""
+    """Weapon class."""
 
     WPN_NAMES = (
         ('bow', 'bow'),
@@ -105,34 +109,38 @@ class WeaponLootItem(LootItem):
         default='0',
         max_length=3)
 
+    bonus_to = models.CharField(
+        choices=(
+            ('at', 'attack'),
+        ),
+        default='at',
+        max_length=2
+    )
+
     def __str__(self):
+        """Object string representation."""
         return ' '.join([
             str(
-                self.find_value(self.ITM_CONDS, self.item_condition)
+                find_value(self.ITM_CONDS, self.item_condition)
             ).capitalize(),
             str(
-                self.find_value(self.ITM_MATERS, self.item_material)
+                find_value(self.ITM_MATERS, self.item_material)
             ).capitalize(),
             str(
-                self.find_value(self.WPN_NAMES, self.weapon_name)
+                find_value(self.WPN_NAMES, self.weapon_name)
             ).capitalize(),
-            '(Damage',
-            '+' + str(self.find_value(self.WPN_MODIFS, self.modificator)) + ')'
+            '(Attack',
+            '+' + str(find_value(self.WPN_MODIFS, self.modificator)) + ')'
         ])
-
-    def find_value(self, choices, name):
-        """Finds value of a choice charfield to return in item name."""
-        for i in choices:
-            if i[0] == name:
-                return i[1]
 
 
 class ArmorLootItem(LootItem):
-    """Weapon class"""
+    """Armor class."""
 
     ARM_NAMES = (
         ('arm', 'armor'),
         ('boo', 'boots'),
+        ('shi', 'shield'),
     )
     armor_name = models.CharField(
         choices=ARM_NAMES,
@@ -155,49 +163,129 @@ class ArmorLootItem(LootItem):
 
     # negative mogifs only for metal armor
     ARM_MODIFS_NEGATIVE = (
-        ('na', 'na'),
-        ('-1', '-1'),  # broken steel, cracked steel
-        ('-2', '-2'),  # poor steel, normal steel
-        ('-3', '-3'),  # good steel
+        ('0', '0'),
+        ('1', '1'),  # broken steel, cracked steel
+        ('2', '2'),  # poor steel, normal steel
+        ('3', '3'),  # good steel
     )
     modificator_negative = models.CharField(
         choices=ARM_MODIFS_NEGATIVE,
         default='-1',
         max_length=2)
 
-    def __str__(self):
+    bonus_to = models.CharField(
+        choices=(
+            ('ar', 'armor'),
+        ),
+        default='ar',
+        max_length=2
+    )
 
-        if self.modificator_negative == 'na':
+    penalty_to = models.CharField(
+        choices=(
+            ('sp', 'speed'),
+        ),
+        default='sp',
+        max_length=2
+    )
+
+    def __str__(self):
+        """Object string representation."""
+        if self.modificator_negative == '0':
             obj_name_last_part = ')'
         else:
-            obj_name_last_part = ', Speed ' + \
+            obj_name_last_part = ', Speed -' + \
                 str(
-                    self.find_value(
+                    find_value(
                         self.ARM_MODIFS_NEGATIVE,
                         self.modificator_negative)
                 ) + ')'
         return ' '.join([
             str(
-                self.find_value(self.ITM_CONDS, self.item_condition)
+                find_value(self.ITM_CONDS, self.item_condition)
             ).capitalize(),
             str(
-                self.find_value(self.ITM_MATERS, self.item_material)
+                find_value(self.ITM_MATERS, self.item_material)
             ).capitalize(),
             str(
-                self.find_value(self.ARM_NAMES, self.armor_name)
+                find_value(self.ARM_NAMES, self.armor_name)
             ).capitalize(),
             '(Armor',
             '+' +
             str(
-                self.find_value(
+                find_value(
                     self.ARM_MODIFS_POSITIVE,
                     self.modificator_positive
                 )
             ) + obj_name_last_part
         ])
 
-    def find_value(self, choices, name):
-        """Finds value of a choice charfield to return in item name."""
-        for i in choices:
-            if i[0] == name:
-                return i[1]
+
+class TrinketLootItem(LootItem):
+    """Trinkets class."""
+
+    TRN_NAMES = (
+        ('amu', 'amulet'),
+        ('rin', 'ring'),
+    )
+    trinket_name = models.CharField(
+        choices=TRN_NAMES,
+        default='amu',
+        max_length=3
+    )
+
+    TRN_MODIFS_POSITIVE = (
+        ('0', '0'),  # broken
+        ('1', '1'),  # cracked
+        ('2', '2'),  # poor
+        ('3', '3'),  # normal
+    )
+    modificator_positive = models.CharField(
+        choices=TRN_MODIFS_POSITIVE,
+        default='0',
+        max_length=1)
+
+    TRN_BONUSES_TO = (
+        ('at', 'attack'),
+        ('hp', 'health'),
+        ('sp', 'speed'),
+        ('ra', 'range'),
+        ('ar', 'armor'),
+    )
+    bonus_to = models.CharField(
+        choices=TRN_BONUSES_TO,
+        default='ar',
+        max_length=2
+    )
+
+    def __str__(self):
+        """Object string representation."""
+        s_bonus_to = str(
+            find_value(
+                self.TRN_BONUSES_TO,
+                self.bonus_to
+            )
+        ).capitalize()
+        return ' '.join([
+            str(
+                find_value(self.ITM_SIZES, self.item_size)
+            ).capitalize(),
+            str(
+                find_value(self.ITM_CONDS, self.item_condition)
+            ).capitalize(),
+            str(
+                find_value(self.ITM_MATERS, self.item_material)
+            ).capitalize(),
+            str(
+                find_value(self.TRN_NAMES, self.trinket_name)
+            ).capitalize(),
+            'of ' + s_bonus_to,
+            '(' + s_bonus_to,
+            '+' +
+            str(
+                find_value(
+                    self.TRN_MODIFS_POSITIVE,
+                    self.modificator_positive
+                )
+            ) + ')'
+        ])
