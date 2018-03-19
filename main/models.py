@@ -171,8 +171,8 @@ class ArmorLootItem(LootItem):
     )
 
     ARM_MODIFS_POSITIVE = (
-        ('0', '0'),  # broken leather, broken steel     (level I)
-        ('1', '1'),  # cracked leather                  (level I)
+        ('0', '0'),  # broken wood                      (level I)
+        ('1', '1'),  # broken/cracked leather, cracked wood, broken steel (level I)
         ('2', '2'),  # poor leather, cracked steel      (level II)
         ('3', '3'),  # normal leather, poor steel       (level II)
         ('4', '4'),  # good leather, normal steel       (level III)
@@ -192,7 +192,7 @@ class ArmorLootItem(LootItem):
     )
     modificator_negative = models.CharField(
         choices=ARM_MODIFS_NEGATIVE,
-        default='-1',
+        default='0',
         max_length=2)
 
     bonus_to = models.CharField(

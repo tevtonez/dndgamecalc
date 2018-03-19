@@ -1,6 +1,7 @@
 """Common functions and classes."""
 
 ITEMS_LEVELS = [1, 2, 3]
+WEAPON_MOD_ZERO_VALUE_LIMIT = 5
 
 WEAPON_NAMES = (
     ('bow'),
@@ -10,6 +11,12 @@ WEAPON_NAMES = (
     ('axe'),
     ('ham'),
     ('arb'),
+)
+
+ARMOR_NAMES = (
+    ('arm'),
+    ('boo'),
+    ('shi'),
 )
 
 

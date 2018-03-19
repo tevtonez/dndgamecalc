@@ -4,36 +4,41 @@ import random
 
 from main.helpers.common import (
     ITEMS_LEVELS,
-    WEAPON_NAMES
+    WEAPON_NAMES,
+    WEAPON_MOD_ZERO_VALUE_LIMIT
 )
-from main.models import (
-    WeaponLootItem,
-    # ArmorLootItem,
-    # TrinketLootItem,
-    # GamerCaracter
-)
+from main.models import WeaponLootItem
 
 
 # GENERATING WEAPON
-
 def gen_weapon_item(
     wp_conditions,
     wp_materials,
     wp_modifiers,
-    level
+    level,
 ):
     """Generate weapon item."""
+    global WEAPON_MOD_ZERO_VALUE_LIMIT
     rand_wp_name = random.choice(WEAPON_NAMES)
     if rand_wp_name == 'bow' or rand_wp_name == 'arb':
         wp_bonus_to = 'ra'
     else:
         wp_bonus_to = 'at'
 
+    # limiting # of level 1 items wiht zero modifier
+    modifier = random.choice(wp_modifiers)
+    if level == 1:
+        if modifier == '0':
+            if WEAPON_MOD_ZERO_VALUE_LIMIT > 0:
+                WEAPON_MOD_ZERO_VALUE_LIMIT = WEAPON_MOD_ZERO_VALUE_LIMIT - 1
+            else:
+                modifier = '1'
+
     w = WeaponLootItem(
         weapon_name=rand_wp_name,
         item_condition=random.choice(wp_conditions),
         item_material=random.choice(wp_materials),
-        modificator=random.choice(wp_modifiers),
+        modificator=modifier,
         bonus_to=wp_bonus_to,
         item_level=level
     )
