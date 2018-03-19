@@ -19,6 +19,17 @@ ARMOR_NAMES = (
     ('shi'),
 )
 
+PLAYER_NAMES = ['Duke Vincent', 'Dadrin', 'Idrill']
+PLAYERS_RACES = ['hum', 'dwa', 'elf']
+MONSTER_RACES = [
+    'bar',
+    'spd',
+    'ske',
+    'ska',
+    'fsp'
+]
+MONSTER_LEVELS = [1, 2, 3]
+
 
 def find_value(choices, name):
     """Find value of a choice charfield to return in item name."""

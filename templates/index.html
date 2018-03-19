@@ -1,17 +1,87 @@
 {% extends 'base.html' %}
 
 {% block body_block %}
-  <h1>Welcome to django web app!</h1>
-  <div class="jumbotron">
-    <p>This is the main page of the application.</p>
-  </div>
 
 {% if request.user.is_authenticated %}
-    sksk
+    You are logged in!
+{% else %}
+    Pleas log in!
 {% endif %}
-  <div class="row">
-      <div class="col-sm-12">
-          <a href="#"><button class="btn btn-success">Start Game</button></a>
-      </div>
-  </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 monsters-list">
+            <div class="row monster skelenton-level-1">
+                <div class="col-sm-12">
+                    <div class="col-sm-2">
+                        <img src="" alt="" width=50 height="50">
+                    </div>
+                    <div class="col-sm-8">
+                        <p>Skeleton (level I)</p>
+                        <p>AT: XX, AR: XX, SP XX</p>
+                        <div class="monster-health">0 0 0 | 0 0 0</div>
+                    </div>
+                    <div class="col-sm-1 monster-number">
+                        <p>#12</p>
+                    </div>
+                    <div class="col-sm-1 monster-attack">
+                        <p><a href="">Attack!</a></p>
+                        <p><a href="">Remove</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row monster skelenton-level-1">
+                <div class="col-sm-12">
+                    <div class="col-sm-2">
+                        <img src="" alt="" width=50 height="50">
+                    </div>
+                    <div class="col-sm-8">
+                        <p>Skeleton (level I)</p>
+                        <p>AT: XX, AR: XX, SP XX</p>
+                        <div class="monster-health">0 0 0 | 0 0 0</div>
+                    </div>
+                    <div class="col-sm-1 monster-number">
+                        <p>#15</p>
+                    </div>
+                    <div class="col-sm-1 monster-attack">
+                        <p><a href="">Attack!</a></p>
+                        <p><a href="">Remove</a></p>
+                    </div>
+                </div>
+            </div>
+        </div> <!--  monsters-list -->
+
+        <div class="col-sm-8 players-list">
+
+        </div> <!--  players-list -->
+    </div> <!-- row -->
+
+    <div class="row">
+        <div class="col-sm-4 add-monsters">
+            <ul>
+                <li><a href="#">Add Skeleton Lv:1</a><input name="skelenton_lv1_num" type="text"></li>
+                <li><a href="#">Add Skeleton Lv:2</a><input name="skelenton_lv2_num" type="text"></li>
+                <li><a href="#">Add Archer Skeleton</a><input name="skelenton_arch_num" type="text"></li>
+                <li><a href="#">Add barrel</a></li>
+                <li><a href="#">Add Flying Spinner</a></li>
+            </ul>
+        </div>
+    </div><!-- row -->
+
+    <div class="row">
+        <div class="col-sm-12 log-display">
+            <p>A log will be displayed here...</p>
+        </div>
+    </div>
+
+    <!--
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="#"><button class="btn btn-success">Start Game</button></a>
+        </div>
+    </div>
+     -->
+
+</div> <!-- container -->
+
 {% endblock %}

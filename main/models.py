@@ -7,41 +7,86 @@ from main.helpers.common import find_value
 class Character(models.Model):
     """Main class for all characters in the game."""
 
+    class Meta:
+        """Meta class."""
+
+        abstract = True
+
     name = models.CharField(max_length=150)
-    health = models.IntegerField()
-    armor = models.IntegerField()
+    health = models.IntegerField(default=4)
+    armor = models.IntegerField(default=5)
     attack = models.CharField(max_length=3, default='3d6')
-    attack_range = models.IntegerField()
-    speed = models.IntegerField()
+    attack_range = models.IntegerField(default=0)
+    attack_modifier = models.IntegerField(default=0)
+    speed = models.IntegerField(default=5)
+    character_level = models.IntegerField(default=1)
+    character_description = models.TextField(
+        max_length=1500,
+        default="Character description..."
+    )
 
 
 class GamerCharacter(Character):
     """Main class for all characters in the game."""
 
     gamer = models.BooleanField(default=True)
-    gamer_description = models.TextField(
-        max_length=1500,
-        default="Gamer character description..."
-    )
 
-    GAMER_RACE = (
-        ('hum', 'human'),
-        ('dwa', 'dwarf'),
-        ('elf', 'elf'),
+    RACE = (
+        ('hum', 'Human'),
+        ('dwa', 'Dwarf'),
+        ('elf', 'Elf'),
     )
-    gamer_race = models.CharField(
-        choices=GAMER_RACE,
+    character_race = models.CharField(
+        choices=RACE,
         default='hum',
         max_length=3
     )
 
     def __str__(self):
         """Object string representation."""
-        return str(self.name)
+        return ' '.join([
+            str(self.name),
+            str(find_value(self.RACE, self.character_race)),
+        ])
+
+
+class MonsterCharacter(Character):
+    """Main class for all characters in the game."""
+
+    monster = models.BooleanField(default=True)
+
+    RACE = (
+        ('bar', 'Barrel'),
+        ('spd', 'Spider'),
+        ('ske', 'Skeleton'),
+        ('ska', 'Archer Skeleton'),
+        ('fsp', 'Flying Spinner')
+    )
+    character_race = models.CharField(
+        choices=RACE,
+        default='ske',
+        max_length=3
+    )
+
+    def __str__(self):
+        """Object string representation."""
+        return ' '.join([
+            str(find_value(self.RACE, self.character_race)),
+            '#' + str(self.name),
+            '(level ' + str(self.character_level) + ')',
+        ])
+
+# Hacking monsters' name field label
+MonsterCharacter._meta.get_field('name').verbose_name = 'Monster #'
 
 
 class LootItem(models.Model):
     """Describes Loot objects."""
+
+    class Meta:
+        """Meta class."""
+
+        abstract = True
 
     # sizes are for amulets
     ITM_SIZES = (
@@ -172,7 +217,7 @@ class ArmorLootItem(LootItem):
 
     ARM_MODIFS_POSITIVE = (
         ('0', '0'),  # broken wood                      (level I)
-        ('1', '1'),  # broken/cracked leather, cracked wood, broken steel (level I)
+        ('1', '1'),  # bro/cra leather, cra wood, bro steel (level I)
         ('2', '2'),  # poor leather, cracked steel      (level II)
         ('3', '3'),  # normal leather, poor steel       (level II)
         ('4', '4'),  # good leather, normal steel       (level III)
