@@ -34,11 +34,11 @@ def gen_armor_item(level):
     l3_arm_boots_cond = 'goo'
 
     l1_leather_arm_bonus = '1'
-    l2_leather_arm_bonus = ('2', '3')
+    # l2_leather_arm_bonus = ('2', '3')
     l3_leather_arm_bonus = '4'
 
     l1_steel_arm_bonus = ('1', '2')
-    l2_steel_arm_bonus = ('3', '4')
+    # l2_steel_arm_bonus = ('3', '4')
     l3_steel_arm_bonus = '5'
 
     l1_steel_arm_penalties = '1'
@@ -89,10 +89,18 @@ def gen_armor_item(level):
                 arm_condition = random.choice(l2_arm_boots_cond)
 
                 if rand_arm_material == 'lea':
-                    modificator_positive = random.choice(l2_leather_arm_bonus)
+                    if arm_condition == 'poo':
+                        modificator_positive = '2'
+                    else:
+                        modificator_positive = '3'
                 else:
-                    modificator_positive = random.choice(l2_steel_arm_bonus)
-                    modificator_negative = random.choice(l2_steel_arm_penalties)
+                    if arm_condition == 'poo':
+                        modificator_positive = '3'
+                    else:
+                        modificator_positive = '4'
+                    modificator_negative = random.choice(
+                        l2_steel_arm_penalties
+                    )
 
             if level == 3:
                 arm_condition = l3_arm_boots_cond
@@ -103,8 +111,15 @@ def gen_armor_item(level):
                     modificator_positive = l3_steel_arm_bonus
                     modificator_negative = l3_steel_arm_penalties
 
+    # BOOTS ARE SPECIAL
     if rand_arm_name == 'boo':
         modificator_negative = '0'
+        if level == 1:
+            modificator_positive = 1
+        elif level == 2:
+            modificator_positive = 2
+        else:
+            modificator_positive = 3
 
     armor_item = ArmorLootItem(
         armor_name=rand_arm_name,
