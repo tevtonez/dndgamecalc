@@ -42,7 +42,7 @@ def gen_armor_item(level):
     l3_steel_arm_bonus = '5'
 
     l1_steel_arm_penalties = '1'
-    l2_steel_arm_penalties = ('1', '2')
+    l2_steel_arm_penalties = '2'
     l3_steel_arm_penalties = '3'
 
     # GENERATING SHIELDS
