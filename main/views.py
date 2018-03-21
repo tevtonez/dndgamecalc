@@ -6,8 +6,11 @@ from django.views.generic import View, TemplateView, ListView, DetailView, Creat
 
 from django.contrib.auth.decorators import login_required
 
-from . import forms
-from . import models
+from main import forms
+from main.models import (
+    GamerCharacter,
+    MonsterCharacter,
+)
 
 class SignUpView(CreateView):
     form_class = forms.UserCreateForm
@@ -17,6 +20,19 @@ class SignUpView(CreateView):
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+        duke = GamerCharacter.objects.get(name='Duke Vincent')
+        dadrin = GamerCharacter.objects.get(name='Dadrin')
+        idrill = GamerCharacter.objects.get(name='Idrill')
+
+        context['players'] = [duke, dadrin, idrill]
+        context['monsters'] = MonsterCharacter.objects.all()
+
+        return context
+
 
 
 class mainIndexView(TemplateView):

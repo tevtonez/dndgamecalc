@@ -73,7 +73,7 @@ class MonsterCharacter(Character):
         return ' '.join([
             str(find_value(self.RACE, self.character_race)),
             '#' + str(self.name),
-            '(level ' + str(self.character_level) + ')',
+            '(lv.' + str(self.character_level) + ')',
         ])
 
 # Hacking monsters' name field label

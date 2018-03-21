@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static from staticfiles %}
+
 
 {% block body_block %}
 
@@ -10,66 +12,103 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-4 monsters-list">
-            <div class="row monster skelenton-level-1">
-                <div class="col-sm-12">
-                    <div class="col-sm-2">
-                        <img src="" alt="" width=50 height="50">
-                    </div>
-                    <div class="col-sm-8">
-                        <p>Skeleton (level I)</p>
-                        <p>AT: XX, AR: XX, SP XX</p>
-                        <div class="monster-health">0 0 0 | 0 0 0</div>
-                    </div>
-                    <div class="col-sm-1 monster-number">
-                        <p>#12</p>
-                    </div>
-                    <div class="col-sm-1 monster-attack">
-                        <p><a href="">Attack!</a></p>
-                        <p><a href="">Remove</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="row monster skelenton-level-1">
-                <div class="col-sm-12">
-                    <div class="col-sm-2">
-                        <img src="" alt="" width=50 height="50">
-                    </div>
-                    <div class="col-sm-8">
-                        <p>Skeleton (level I)</p>
-                        <p>AT: XX, AR: XX, SP XX</p>
-                        <div class="monster-health">0 0 0 | 0 0 0</div>
-                    </div>
-                    <div class="col-sm-1 monster-number">
-                        <p>#15</p>
-                    </div>
-                    <div class="col-sm-1 monster-attack">
-                        <p><a href="">Attack!</a></p>
-                        <p><a href="">Remove</a></p>
-                    </div>
-                </div>
-            </div>
-        </div> <!--  monsters-list -->
 
-        <div class="col-sm-8 players-list">
+            <div class="col-sm-7 monsters-list">
+
+                {% for monster in monsters %}
+                    <div class="row monster">
+                        <div class="col-sm-12">
+                            <div class="col-sm-2">
+                                <img src="{% static "images/skeleton_lv_1.png" %}" alt="" width="90" height="120">
+                            </div>
+                            <div class="col-sm-10">
+                                <div class="col-sm-5">
+                                    <p>{{monster}} <a href="#"><span class="fa fa-times-circle"></span></a></p>
+                                    <p>AT: {{monster.attack}}{{monster.attack_modifier}}, AR: {{monster.armor}}, SP: {{monster.speed}}</p>
+                                    <div class="monster-health">
+                                        {% for _ in "x"|ljust:monster.health %}
+                                            <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3 monster-attack">
+                                    <p><a href="">Attacks Vincent!</a></p>
+                                    <p><a href="">Attacks Dadril!</a></p>
+                                    <p><a href="">Attacks Idrill!</a></p>
+                                </div>
+                                <div class="col-sm-4 monster-attack">
+                                    <p><a href="">Attacked by Vincent!</a></p>
+                                    <p><a href="">Attacked by Dadril!</a></p>
+                                    <p><a href="">Attacked by Idrill!</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="col-sm-5 add-monsters">
+                <ul>
+                    <li><a href="#">Add Skeleton Lv:1</a> with number <input name="skelenton_lv1_num" type="text"></li>
+                    <li><a href="#">Add Skeleton Lv:2</a> with number <input name="skelenton_lv2_num" type="text"></li>
+                    <li><a href="#">Add Archer Skeleton</a> with number <input name="skelenton_arch_num" type="text"></li>
+                    <li><a href="#">Add Spiders</a> with number <input name="skelenton_arch_num" type="text"></li>
+                    <li><a href="#">Add barrel</a></li>
+                    <li><a href="#">Add Flying Spinner</a></li>
+                </ul>
+            </div>
+    </div> <!-- row -->
+
+
+    <div class="row">
+        <div class="col-sm-12 players-list">
+            {% for player in players %}
+            <div class="col-sm-4 player">
+                <div class="player-info">
+                    {% if player.name == 'Duke Vincent' %}
+                        <img src="{% static "images/duke.png" %}" alt="">
+                    {% elif player.name == 'Dadrin' %}
+                        <img src="{% static "images/dadrin.png" %}" alt="">
+                    {% elif player.name == 'Idrill' %}
+                        <img src="{% static "images/idrill.png" %}" alt="">
+                    {% endif %}
+
+                    <div class="player-health">
+                        {% for _ in "x"|ljust:player.health %}
+                            <span class="fa fa-heart" style="font-size:24px;color:red;"></span>
+                        {% endfor %}
+                    </div>
+                    <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
+                    <p>AR: {{player.armor}}</p>
+                    <p>AT: {{player.attack}} + {{player.attack_modifier}}</p>
+                    <p>SP: {{player.speed}}</p>
+                    <p>RA: {{player.attack_range}}</p>
+                    <a href="">Info (accordion)</a>
+                    <div class="player-info">
+                        {{player.character_description}}
+                    </div>
+                    <div class="inventory">
+                        here will go inventory
+                    </div>
+                </div>
+            </div> <!-- player -->
+            {% endfor %}
 
         </div> <!--  players-list -->
     </div> <!-- row -->
 
-    <div class="row">
-        <div class="col-sm-4 add-monsters">
-            <ul>
-                <li><a href="#">Add Skeleton Lv:1</a><input name="skelenton_lv1_num" type="text"></li>
-                <li><a href="#">Add Skeleton Lv:2</a><input name="skelenton_lv2_num" type="text"></li>
-                <li><a href="#">Add Archer Skeleton</a><input name="skelenton_arch_num" type="text"></li>
-                <li><a href="#">Add barrel</a></li>
-                <li><a href="#">Add Flying Spinner</a></li>
-            </ul>
-        </div>
-    </div><!-- row -->
 
     <div class="row">
-        <div class="col-sm-12 log-display">
+        <div class="col-sm-12 log-display" style="overflow-y: scroll; height:200px; border:1px solid">
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
             <p>A log will be displayed here...</p>
         </div>
     </div>
