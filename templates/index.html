@@ -24,7 +24,7 @@
                             <div class="col-sm-10">
                                 <div class="col-sm-5">
                                     <p>{{monster}} <a href="#"><span class="fa fa-times-circle"></span></a></p>
-                                    <p>AT: {{monster.attack}}{{monster.attack_modifier}}, AR: {{monster.armor}}, SP: {{monster.speed}}</p>
+                                    <p>AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}, AR: {{monster.armor}}, SP: {{monster.speed}}</p>
                                     <div class="monster-health">
                                         {% for _ in "x"|ljust:monster.health %}
                                             <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
@@ -100,7 +100,7 @@
                     </div>
                     <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
                     <p>AR: {{player.armor}}</p>
-                    <p>AT: {{player.attack}} + {{player.attack_modifier}}</p>
+                    <p>AT: {{player.attack}}d6 + {{player.attack_modifier}}</p>
                     <p>SP: {{player.speed}}</p>
                     <p>RA: {{player.attack_range}}</p>
                     <a href="">Info (accordion)</a>
