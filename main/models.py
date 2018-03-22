@@ -15,7 +15,7 @@ class Character(models.Model):
     name = models.CharField(max_length=150)
     health = models.IntegerField(default=4)
     armor = models.IntegerField(default=5)
-    attack = models.CharField(max_length=3, default='3d6')
+    attack = models.IntegerField(default=3)
     attack_range = models.IntegerField(default=0)
     attack_modifier = models.IntegerField(default=0)
     speed = models.IntegerField(default=5)
