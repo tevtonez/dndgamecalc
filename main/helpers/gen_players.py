@@ -1,12 +1,12 @@
 """Generating monsters and players."""
 
 from main.models import (
-    GamerCharacter
+    PlayerCharacter
 )
 
 
 # GENERATING PLAYERS
-duke = GamerCharacter(
+duke = PlayerCharacter(
     name='Duke Vincent',
     health='4',
     armor='7',
@@ -17,7 +17,7 @@ duke = GamerCharacter(
 )
 duke.save()
 
-dadrin = GamerCharacter(
+dadrin = PlayerCharacter(
     name='Dadrin',
     health='5',
     armor='6',
@@ -29,7 +29,7 @@ dadrin = GamerCharacter(
 )
 dadrin.save()
 
-idrill = GamerCharacter(
+idrill = PlayerCharacter(
     name='Idrill',
     health='4',
     armor='5',

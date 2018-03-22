@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from main import forms
 from main.models import (
-    GamerCharacter,
+    PlayerCharacter,
     MonsterCharacter,
 )
 
@@ -24,9 +24,9 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        duke = GamerCharacter.objects.get(name='Duke Vincent')
-        dadrin = GamerCharacter.objects.get(name='Dadrin')
-        idrill = GamerCharacter.objects.get(name='Idrill')
+        duke = PlayerCharacter.objects.get(name='Duke Vincent')
+        dadrin = PlayerCharacter.objects.get(name='Dadrin')
+        idrill = PlayerCharacter.objects.get(name='Idrill')
 
         context['players'] = [duke, dadrin, idrill]
         context['monsters'] = MonsterCharacter.objects.all()

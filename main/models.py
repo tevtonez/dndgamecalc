@@ -26,10 +26,10 @@ class Character(models.Model):
     )
 
 
-class GamerCharacter(Character):
+class PlayerCharacter(Character):
     """Main class for all characters in the game."""
 
-    gamer = models.BooleanField(default=True)
+    player = models.BooleanField(default=True)
 
     RACE = (
         ('hum', 'Human'),
