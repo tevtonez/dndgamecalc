@@ -73,7 +73,7 @@ class MonsterCharacter(Character):
             full_info = '#' + str(self.name) + \
                 ' (lv.' + str(self.character_level) + ')'
         else:
-            full_info = ''
+            full_info = str(self.name)
 
         return ' '.join([
             str(find_value(self.RACE, self.character_race)),

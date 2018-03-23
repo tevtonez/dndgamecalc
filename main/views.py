@@ -23,6 +23,41 @@ from main.models import (
 )
 
 
+def monster_create(
+    x_times,
+    name,
+    character_race,
+    health,
+    armor,
+    character_description,
+    attack_range=0,
+    attack_modifier=0,
+    speed=0,
+    character_level=1,
+    attack=3,
+):
+    """Create monster."""
+    for i in range(x_times):
+
+        if character_race == 'bar':
+            name = len(MonsterCharacter.objects.filter().filter(character_race='bar')) + 1
+
+        m = MonsterCharacter(
+            name=name,
+            character_race=character_race,
+            health=health,
+            armor=armor,
+            character_description=character_description,
+            attack_range=attack_range,
+            speed=speed,
+            character_level=character_level,
+            attack=attack,
+        )
+        m.save()
+
+    return m
+
+
 class SignUpView(CreateView):
     """Signup users view."""
 
@@ -57,7 +92,33 @@ class MonsterCreateView(View):
         monster_race = self.kwargs['monster_race']
         monster_name = self.kwargs['monster_number']
 
-        # creting barrel
+        # creating 3 barrels
+        if monster_race == "bar":
+            x_times = 3
+            name = 1
+            race = monster_race
+            health = 1
+            armor = 8
+            attack_range = 0
+            attack_modifier = 0
+            speed = 0
+            character_level = 1
+            attack = 0
+            character_description = "An ordinary barrel people to use to store their stuff in. This one is full of cobwebs and maybe some goods, you never know until you check..."
+
+        monster_create(
+            x_times,
+            name,
+            race,
+            health,
+            armor,
+            character_description,
+            attack_range=attack_range,
+            attack_modifier=attack_modifier,
+            speed=speed,
+            character_level=character_level,
+            attack=attack
+        )
 
         return redirect('home')
 
