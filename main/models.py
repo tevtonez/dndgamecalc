@@ -1,6 +1,5 @@
-"""Models."""
-
 from django.db import models
+
 from main.helpers.common import find_value
 
 
@@ -71,7 +70,8 @@ class MonsterCharacter(Character):
     def __str__(self):
         """Object string representation."""
         if self.character_race not in ['bar', 'fsp']:
-            full_info = '#' + str(self.name) + ' (lv.' + str(self.character_level) + ')'
+            full_info = '#' + str(self.name) + \
+                ' (lv.' + str(self.character_level) + ')'
         else:
             full_info = ''
 
