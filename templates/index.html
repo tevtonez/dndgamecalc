@@ -54,26 +54,31 @@
             <div class="col-sm-5 add-monsters">
                 <ul>
                     <li>
-                        Add Skeleton Lv.I with number <input name="skelenton_lv1_num" type="text">
-                        <a href="#"><span class="fa fa-plus-square"></span></a>
+                        Add Skeleton Lv.I with number <input id="ske1-num" name="skelenton-lv1-num" type="number" value="1">
+                        <a id="ske1-href" href=""><span id="ske1" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
                     </li>
+
                     <li>
-                        Add Skeleton Lv.II with number <input name="skelenton_lv2_num" type="text">
-                        <a href="#"><span class="fa fa-plus-square"></span></a></li>
+                        Add Skeleton Lv.II with number <input id="ske2-num" name="skelenton-lv1-num" type="number" value="1">
+                        <a id="ske2-href" href=""><span id="ske2" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
                     </li>
+
                     <li>
-                        Add Archer Skeleton with number <input name="skelenton_arch_num" type="text">
-                        <a href="#"><span class="fa fa-plus-square"></span></a></li>
+                        Add Archer Skeleton with number <input id="ska-num" name="skelenton-lv1-num" type="number" value="1">
+                        <a id="ska-href" href=""><span id="ska" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
                     </li>
+
                     <li>
-                        Add Spiders with number <input name="skelenton_arch_num" type="text">
-                        <a href="#"><span class="fa fa-plus-square"></span></a></li>
+                        Add Spider Skeleton with number <input id="spd-num" name="skelenton-lv1-num" type="number" value="1">
+                        <a id="spd-href" href=""><span id="spd" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
                     </li>
+
                     <li>
-                        <a href="#">Add barrel</a>
+                        <a href="{% url 'main:generate_monster' monster_race='bar'  monster_number=1 %}">Add 3 barrels</a>
                     </li>
+
                     <li>
-                        <a href="#">Add Flying Spinner</a>
+                        <a href="{% url 'main:generate_monster' monster_race='fsp'  monster_number=1 %}">Add Flying Spinner</a>
                     </li>
                 </ul>
             </div>
@@ -141,4 +146,24 @@
 
 </div> <!-- container -->
 
+<script>
+function changeLink() {
+    var id_base = event.srcElement.id;
+    // var race = id_base.slice(0, -2);
+    var link = document.getElementById(id_base + '-href');
+    var num = document.getElementById(id_base + '-num').value;
+    var href_string = "main/monster/".concat(id_base, "/", num, "/");
+
+    link.setAttribute('href', href_string);
+
+    // original URL jinja template  tag
+    // link.setAttribute('href', "{% url 'main:generate_monster' monster_race='ske'  monster_number=23 %}");
+
+    return false;
+}
+</script>
+
 {% endblock %}
+
+
+

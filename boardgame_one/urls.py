@@ -22,6 +22,6 @@ urlpatterns = [
     url(r'signup/$', main_views.SignUpView.as_view(),name = 'signup'),
 
     # app url
-    url(r'^main/', include('main.urls')),
+    url(r'^main/', include('main.urls', namespace="main")),
 
 ]# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

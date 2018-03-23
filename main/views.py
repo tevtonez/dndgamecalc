@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from django.contrib.auth.decorators import login_required
@@ -33,6 +34,15 @@ class IndexView(TemplateView):
 
         return context
 
+
+class MonsterCreateView(View):
+
+    def get(self, request, *args, **kwargs):
+        """Get HTTP method."""
+        monster_race = self.kwargs['monster_race']
+        monster_name = self.kwargs['monster_number']
+
+        return redirect('home')
 
 
 class mainIndexView(TemplateView):
