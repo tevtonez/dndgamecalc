@@ -7,8 +7,13 @@ body{
     width: 40px;
 }
 
+.monsters-list,
 .log-display{
     overflow-y: scroll;
     height:200px;
     border:1px solid
+}
+
+.monsters-list{
+    height: 350px;
 }

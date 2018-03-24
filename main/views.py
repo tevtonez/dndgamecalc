@@ -23,6 +23,17 @@ from main.models import (
 )
 
 
+def monster_delete(id):
+    """Delete a monster by its ID."""
+    try:
+        m = MonsterCharacter.objects.get(id=id)
+    except:
+        m = None
+
+    if m:
+        m.delete()
+
+
 def monster_create(
     x_times,
     name,
@@ -49,6 +60,7 @@ def monster_create(
             armor=armor,
             character_description=character_description,
             attack_range=attack_range,
+            attack_modifier=attack_modifier,
             speed=speed,
             character_level=character_level,
             attack=attack,
@@ -85,7 +97,7 @@ class IndexView(TemplateView):
 
 
 class MonsterCreateView(View):
-    """Crete monsters"""
+    """Create monsters."""
 
     def get(self, request, *args, **kwargs):
         """Get HTTP method."""
@@ -104,7 +116,77 @@ class MonsterCreateView(View):
             speed = 0
             character_level = 1
             attack = 0
-            character_description = "An ordinary barrel people to use to store their stuff in. This one is full of cobwebs and maybe some goods, you never know until you check..."
+            character_description = "An ordinary barrel people to use to store their stuff in.\nThis one is full of cobwebs and maybe some goods, you never know until you check..."
+
+        # creating Skeleton lev.1
+        elif monster_race == "ske1":
+            x_times = 1
+            name = monster_name
+            race = 'ske'
+            character_level = 1
+            health = 4
+            armor = 8
+            speed = 4
+            attack = 3
+            attack_range = 1
+            attack_modifier = 0
+            character_description = "A walking skeleton, with some withered flesh on its bones.\nThe very appearance of this creation infuses an endless paralyzing horror in everyone who sees it. The chilling look of the empty eye sockets of the skeleton penetrates right into the soul, emptying it and depleting the strength of living beings."
+
+        # creating Skeleton lev.2
+        elif monster_race == "ske2":
+            x_times = 1
+            name = monster_name
+            race = 'ske'
+            character_level = 2
+            health = 6
+            armor = 10
+            speed = 5
+            attack = 3  # 3d6
+            attack_range = 1
+            attack_modifier = 0
+            character_description = "A walking skeleton, with a rusty chipped sword with huge nicks here and there on its blade.\nThis fast and fierce monster inhabits the darkest levels of Skeleton cave where it has the most of the advantage by attacking adventurers from the dark."
+
+        # creating Archer Skeleton lev.2
+        elif monster_race == "ska":
+            x_times = 1
+            name = monster_name
+            race = monster_race
+            character_level = 2
+            health = 5
+            armor = 8
+            speed = 5
+            attack = 3  # 3d6
+            attack_range = 5
+            attack_modifier = 0
+            character_description = "A walking skeleton, with a strong bow.\nThis silent monster kills quickly with precise shots. Its victims never know what killed them."
+
+        # creating Spider lev.1
+        elif monster_race == "spd":
+            x_times = 1
+            name = monster_name
+            race = monster_race
+            character_level = 1
+            health = 2
+            armor = 8
+            speed = 2
+            attack = 2  # 2d6
+            attack_range = 1
+            attack_modifier = 0
+            character_description = "A shiny black fat spider with hairy paws.\nHis black, shining eyes are staring at you, and fluorescing in the dark poison is dripping from its fangs."
+
+        # creating Flying Spinner - the Boss
+        elif monster_race == "fsp":
+            x_times = 1
+            name = ''
+            race = monster_race
+            character_level = 1
+            health = 10
+            armor = 14
+            speed = 6
+            attack = 3  # 3d6
+            attack_range = 1
+            attack_modifier = 1
+            character_description = "..."
 
         monster_create(
             x_times,
@@ -119,6 +201,17 @@ class MonsterCreateView(View):
             character_level=character_level,
             attack=attack
         )
+
+        return redirect('home')
+
+
+class MonsterDeleteView(View):
+    """Delete monsters view."""
+
+    def get(self, request, *args, **kwargs):
+        monster_id = self.kwargs['monster_id']
+
+        monster_delete(monster_id)
 
         return redirect('home')
 
