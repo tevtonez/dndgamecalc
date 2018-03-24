@@ -46,6 +46,7 @@ def monster_create(
     speed=0,
     character_level=1,
     attack=3,
+    monster=True
 ):
     """Create monster."""
     for i in range(x_times):
@@ -61,6 +62,7 @@ def monster_create(
             speed=speed,
             character_level=character_level,
             attack=attack,
+            monster=monster,
         )
         m.save()
 
@@ -87,8 +89,12 @@ class IndexView(TemplateView):
         dadrin = PlayerCharacter.objects.get(name='Dadrin')
         idrill = PlayerCharacter.objects.get(name='Idrill')
 
+        monsters_list = MonsterCharacter.objects.all().order_by('-id')
+
         context['players'] = [duke, dadrin, idrill]
-        context['monsters'] = MonsterCharacter.objects.all().order_by('-id')
+        context['monsters'] = monsters_list
+        context['monsters_count'] = len(monsters_list.filter(monster=True))
+        context['objects_count'] = len(monsters_list.filter(monster=False))
 
         return context
 
@@ -114,6 +120,7 @@ class MonsterCreateView(View):
             speed = 0
             character_level = 1
             attack = 0
+            monster = False
             character_description = "An ordinary barrel people to use to store their stuff in.\nThis one is full of cobwebs and maybe some goods, you never know until you check..."
 
         # creating Skeleton lev.1
@@ -184,7 +191,7 @@ class MonsterCreateView(View):
             attack = 3  # 3d6
             attack_range = 1
             attack_modifier = 1
-            character_description = "..."
+            character_description = "Run, you fulls!!!"
 
         monster_create(
             x_times,
@@ -197,7 +204,8 @@ class MonsterCreateView(View):
             attack_modifier=attack_modifier,
             speed=speed,
             character_level=character_level,
-            attack=attack
+            attack=attack,
+            monster=monster
         )
 
         return redirect('home')

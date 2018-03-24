@@ -11,23 +11,34 @@ h3{
     width: 40px;
 }
 
-.monsters-list,
-.log-display{
+.left-col div{
+    padding: 0;
+}
+
+#monsters-list,
+#log-display{
     overflow-y: scroll;
     height:180px;
     border:1px solid
 }
 
-.monsters-list{
+#monsters-list{
     height: 300px;
 }
 
-.monsters-list hr{
-    margin:3px 0 10px 0;
+#monsters-list hr{
+    margin:10px auto;
+    width: 90%;
+    border: none;
+    height: 1px;
+    color: #c1c1c1;
+    background-color: #c1c1c1;
 }
 
-.monster div,
-.monsters-list div,
-.add-monsters div{
-    padding: 0;
+#log-display{
+    padding: 10px 10px 0 10px;
+}
+
+#monsters-list{
+  padding: 10px 0 0 0;
 }

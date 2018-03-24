@@ -37,6 +37,6 @@ idrill = PlayerCharacter(
     attack_modifier=1,
     speed=7,
     character_race='elf',
-    character_description='Idrill is daughter of a ruler of Southern elf clan that lives in the heart of Evergreen Forest Vastness.\nShe has her own task in this part of Great Continent but by the forces of fate she joins Duke Vincent and Dadrin in the quest of defeating a monster in a cave of skeletons.'
+    character_description='Idrill is a daughter of a ruler of a mighty Southern elf clan that lives in the heart of Evergreen Forest Vastness.\nShe has her own task in this part of Great Continent but by the forces of fate she joins Duke Vincent and Dadrin in the quest of defeating a monster in a cave of skeletons.'
 )
 idrill.save()
