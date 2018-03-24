@@ -22,7 +22,9 @@
             </div>
 
             <div class="col-sm-5">
-                <p>{{monster}} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
+                <p>{{monster}} {% if monster.name != '' %}
+                    <strong>#{{monster.name}}</strong>
+                {% endif %} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
                 <p>AR: {{monster.armor}}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}</p>
                 <div class="monster-health">
                     {% for _ in "x"|ljust:monster.health %}
@@ -33,18 +35,20 @@
 
             <div class="col-sm-2 monster-attack">
             {% if monster.character_race != 'bar' %}
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='vin' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Vincent</a></p>
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='dad' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Dadril</a></p>
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='idr' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Idrill</a></p>
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='vin' %}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> Vincent</a></p>
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='dad' %}" title="Monster attacks Dadril"><img src="{% static "images/bite.png" %}" alt="" width=24> Dadril</a></p>
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='idr' %}" title="Monster attacks Idrill"><img src="{% static "images/bite.png" %}" alt="" width=24> Idrill</a></p>
             {% endif %}
             </div>
             <div class="col-sm-2 monster-attack">
-                <p><a href="{% url 'main:player_attacks' player='vin' monster_id=monster.id %}">Vincent <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                <p><a href="{% url 'main:player_attacks' player='dad' monster_id=monster.id %}">Dadril <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                <p><a href="{% url 'main:player_attacks' player='idr' monster_id=monster.id %}">Idrill <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                <p><a href="{% url 'main:player_attacks' player='vin' monster_id=monster.id %}" title="Vincent attacks monster">Vincent <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                <p><a href="{% url 'main:player_attacks' player='dad' monster_id=monster.id %}" title="Dadril attacks monster">Dadril <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                <p><a href="{% url 'main:player_attacks' player='idr' monster_id=monster.id %}" title="Idrill attacks monster">Idrill <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+            </div>
+            <div class="col-sm-12">
+                <hr style="width=80%;">
             </div>
 
-            <hr style="width=80%;">
         {% empty %}
             Add monsters using form on the right --->
         {% endfor %}

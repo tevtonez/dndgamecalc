@@ -19,7 +19,11 @@ h3{
 }
 
 .monsters-list{
-    height: 350px;
+    height: 300px;
+}
+
+.monsters-list hr{
+    margin:3px 0 10px 0;
 }
 
 .monster div,

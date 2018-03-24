@@ -70,10 +70,9 @@ class MonsterCharacter(Character):
     def __str__(self):
         """Object string representation."""
         if self.character_race not in ['bar', 'fsp']:
-            full_info = '#' + str(self.name) + \
-                ' (lv.' + str(self.character_level) + ')'
+            full_info = ' (lv.' + str(self.character_level) + ')'
         else:
-            full_info = str(self.name)
+            full_info = ''
 
         return ' '.join([
             str(find_value(self.RACE, self.character_race)),

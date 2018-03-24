@@ -50,9 +50,6 @@ def monster_create(
     """Create monster."""
     for i in range(x_times):
 
-        if character_race == 'bar':
-            name = len(MonsterCharacter.objects.filter().filter(character_race='bar')) + 1
-
         m = MonsterCharacter(
             name=name,
             character_race=character_race,
@@ -105,9 +102,10 @@ class MonsterCreateView(View):
         monster_name = self.kwargs['monster_number']
 
         # creating 3 barrels
+
         if monster_race == "bar":
             x_times = 3
-            name = 1
+            name = ''
             race = monster_race
             health = 1
             armor = 8
