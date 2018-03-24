@@ -11,131 +11,118 @@
 {% endif %}
 
 <div class="row">
-    <div class="col-sm-7 monsters-list">
+    <div class="col-sm-6">
+        <h3>Monsters:</h3>
 
+        <div class="col-sm-12 monsters-list">
         {% for monster in monsters %}
-            <div class="row monster">
-                <div class="col-sm-12">
-                    <div class="col-sm-2">
-                        <img src="static/images/{{monster.character_race}}{% if monster.character_race == 'ske' and monster.character_level == 2 %}-2{% endif %}.png" alt="" width="90" height="100">
-                    </div>
-                    <div class="col-sm-10">
-                        <div class="col-sm-5">
-                            <p>{{monster}} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
-                            <p>AR: {{monster.armor}}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}</p>
-                            <div class="monster-health">
-                                {% for _ in "x"|ljust:monster.health %}
-                                    <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
-                                {% endfor %}
-                            </div>
-                        </div>
 
-                        <div class="col-sm-3 monster-attack">
-                        {% if monster.character_race != 'bar' %}
-                            <p><a href=""><img src="{% static "images/bite.png" %}" alt="" width=24> Vincent</a></p>
-                            <p><a href=""><img src="{% static "images/bite.png" %}" alt="" width=24> Dadril</a></p>
-                            <p><a href=""><img src="{% static "images/bite.png" %}" alt="" width=24> Idrill</a></p>
-                        {% endif %}
-                        </div>
-                        <div class="col-sm-4 monster-attack">
-                            <p><a href="">Vincent <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                            <p><a href="">Dadril <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                            <p><a href="">Idrill <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                        </div>
-                    </div>
+            <div class="col-sm-3 text-center">
+                <img src="static/images/{{monster.character_race}}{% if monster.character_race == 'ske' and monster.character_level == 2 %}-2{% endif %}.png" alt="" width="90" height="100">
+            </div>
+
+            <div class="col-sm-5">
+                <p>{{monster}} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
+                <p>AR: {{monster.armor}}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}</p>
+                <div class="monster-health">
+                    {% for _ in "x"|ljust:monster.health %}
+                        <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
+                    {% endfor %}
                 </div>
             </div>
+
+            <div class="col-sm-2 monster-attack">
+            {% if monster.character_race != 'bar' %}
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='vin' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Vincent</a></p>
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='dad' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Dadril</a></p>
+                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='idr' %}"><img src="{% static "images/bite.png" %}" alt="" width=24> Idrill</a></p>
+            {% endif %}
+            </div>
+            <div class="col-sm-2 monster-attack">
+                <p><a href="{% url 'main:player_attacks' player='vin' monster_id=monster.id %}">Vincent <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                <p><a href="{% url 'main:player_attacks' player='dad' monster_id=monster.id %}">Dadril <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                <p><a href="{% url 'main:player_attacks' player='idr' monster_id=monster.id %}">Idrill <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+            </div>
+
             <hr style="width=80%;">
         {% empty %}
             Add monsters using form on the right --->
         {% endfor %}
+        </div> <!-- monsters-list -->
+
+        <div class="col-sm-12"><h3>Game Log:</h3></div>
+        <div class="col-sm-12 log-display">
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+            <p>A log will be displayed here...</p>
+        </div>
 
     </div>
+    <div class="col-sm-6">
+        <h3>Players:</h3>
 
-    <div class="col-sm-5 add-monsters">
-        <ul>
-            <li>
-                Add Skeleton Lv.I with number <input id="ske1-num" name="skelenton-lv1-num" type="number" value="1">
-                <a id="ske1-href" href=""><span id="ske1" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
-            </li>
-
-            <li>
-                Add Skeleton Lv.II with number <input id="ske2-num" name="skelenton-lv1-num" type="number" value="1">
-                <a id="ske2-href" href=""><span id="ske2" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
-            </li>
-
-            <li>
-                Add Archer Skeleton with number <input id="ska-num" name="skelenton-lv1-num" type="number" value="1">
-                <a id="ska-href" href=""><span id="ska" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
-            </li>
-
-            <li>
-                Add Spider with number <input id="spd-num" name="skelenton-lv1-num" type="number" value="1">
-                <a id="spd-href" href=""><span id="spd" onmouseover="changeLink()" class="fa fa-plus-square"></span></a>
-            </li>
-
-            <li>
-                <a href="{% url 'main:generate_monster' monster_race='bar'  monster_number=1 %}">Add 3 barrels</a>
-            </li>
-
-            <li>
-                <a href="{% url 'main:generate_monster' monster_race='fsp'  monster_number=1 %}">Add Flying Spinner</a>
-            </li>
-        </ul>
-    </div>
-</div> <!-- row -->
-
-
-<div class="row">
-    <div class="col-sm-12 players-list">
-        {% for player in players %}
-        <div class="col-sm-4 player">
-            <div class="player-info">
-                {% if player.name == 'Duke Vincent' %}
-                    <img src="{% static "images/duke.png" %}" alt="">
-                {% elif player.name == 'Dadrin' %}
-                    <img src="{% static "images/dadrin.png" %}" alt="">
-                {% elif player.name == 'Idrill' %}
-                    <img src="{% static "images/idrill.png" %}" alt="">
-                {% endif %}
-
-                <div class="player-health">
-                    {% for _ in "x"|ljust:player.health %}
-                        <span class="fa fa-heart" style="font-size:24px;color:red;"></span>
-                    {% endfor %}
-                </div>
-                <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
-                <p>AR: {{player.armor}}</p>
-                <p>AT: {{player.attack}}d6 + {{player.attack_modifier}}</p>
-                <p>SP: {{player.speed}}</p>
-                <p>RA: {{player.attack_range}}</p>
-                <a href="">Info (accordion)</a>
+        <div class="players-list">
+            {% for player in players %}
+            <div class="col-sm-4 player">
                 <div class="player-info">
-                    {{player.character_description}}
-                </div>
-                <div class="inventory">
-                    here will go inventory
-                </div>
-            </div>
-        </div> <!-- player -->
-        {% endfor %}
+                    {% if player.name == 'Duke Vincent' %}
+                        <img src="{% static "images/duke.png" %}" height="200" alt="">
+                    {% elif player.name == 'Dadrin' %}
+                        <img src="{% static "images/dadrin.png" %}" height="200" alt="">
+                    {% elif player.name == 'Idrill' %}
+                        <img src="{% static "images/idrill.png" %}" height="200" alt="">
+                    {% endif %}
 
-    </div> <!--  players-list -->
+                    <div class="player-health">
+                        {% for _ in "x"|ljust:player.health %}
+                            <span class="fa fa-heart" style="font-size:24px;color:red;"></span>
+                        {% endfor %}
+                    </div>
+                    <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
+                    <p>AR: {{player.armor}}</p>
+                    <p>AT: {{player.attack}}d6 + {{player.attack_modifier}}</p>
+                    <p>SP: {{player.speed}}</p>
+                    <p>RA: {{player.attack_range}}</p>
+                    <a data-toggle="collapse" data-target="#demo-{{player.name}}">Info</a>
+                    <div id="demo-{{player.name}}" class="collapse player-info">
+                        {{player.character_description}}
+                    </div>
+                    <div class="inventory">
+                        here will go inventory
+                    </div>
+                </div>
+            </div> <!-- player -->
+            {% endfor %}
+        </div> <!--  players-list -->
+    </div>
+
+
 </div> <!-- row -->
 
-
 <div class="row">
-    <div class="col-sm-12 log-display">
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
-        <p>A log will be displayed here...</p>
+    <div class="col-sm-6 add-monsters">
+        <div class="col-sm-12"><h3>Add monsters to game:</h3></div>
+        <div class="col-sm-7">
+                <p>Skeleton Lv.I # <input id="ske1-num" name="skelenton-lv1-num" type="number" value="1">
+                <a id="ske1-href" href=""><span id="ske1" onmouseover="changeLink()" class="fa fa-plus-square"></span></a></p>
+                <p>Skeleton Lv.II # <input id="ske2-num" name="skelenton-lv1-num" type="number" value="1">
+                <a id="ske2-href" href=""><span id="ske2" onmouseover="changeLink()" class="fa fa-plus-square"></span></a></p>
+                <p>Archer Skeleton # <input id="ska-num" name="skelenton-lv1-num" type="number" value="1">
+                <a id="ska-href" href=""><span id="ska" onmouseover="changeLink()" class="fa fa-plus-square"></span></a></p>
+        </div>
+        <div class="col-sm-5">
+                <p>Spider # <input id="spd-num" name="skelenton-lv1-num" type="number" value="1">
+                <a id="spd-href" href=""><span id="spd" onmouseover="changeLink()" class="fa fa-plus-square"></span></a></p>
+                <p><a href="{% url 'main:generate_monster' monster_race='bar'  monster_number=1 %}">3 barrels</a></p>
+                <p><a href="{% url 'main:generate_monster' monster_race='fsp'  monster_number=1 %}">Flying Spinner</a></p>
+        </div>
     </div>
-</div>
+</div> <!-- row -->
 
     <!--
     <div class="row">

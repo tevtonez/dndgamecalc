@@ -91,7 +91,7 @@ class IndexView(TemplateView):
         idrill = PlayerCharacter.objects.get(name='Idrill')
 
         context['players'] = [duke, dadrin, idrill]
-        context['monsters'] = MonsterCharacter.objects.all()
+        context['monsters'] = MonsterCharacter.objects.all().order_by('-id')
 
         return context
 
@@ -201,6 +201,30 @@ class MonsterCreateView(View):
             character_level=character_level,
             attack=attack
         )
+
+        return redirect('home')
+
+
+class PlayerAttacksView(View):
+    """Player Attacks a Monster view."""
+
+    def get(self, request, *args, **kwargs):
+        player = self.kwargs['player']
+        monster_id = self.kwargs['monster_id']
+        print(player)
+        print(monster_id)
+
+        return redirect('home')
+
+
+class MonsterAttacksView(View):
+    """Monster Attacks a Player view."""
+
+    def get(self, request, *args, **kwargs):
+        player_attacked = self.kwargs['player_attacked']
+        monster_id = self.kwargs['monster_id']
+        print(player_attacked)
+        print(monster_id)
 
         return redirect('home')
 

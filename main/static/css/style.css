@@ -2,6 +2,10 @@ body{
   padding-top: 70px;
 }
 
+h3{
+    margin: 10px 0;
+    font-size: 20px;
+}
 
 .add-monsters input{
     width: 40px;
@@ -10,10 +14,16 @@ body{
 .monsters-list,
 .log-display{
     overflow-y: scroll;
-    height:200px;
+    height:180px;
     border:1px solid
 }
 
 .monsters-list{
     height: 350px;
+}
+
+.monster div,
+.monsters-list div,
+.add-monsters div{
+    padding: 0;
 }
