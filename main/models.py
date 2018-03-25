@@ -381,3 +381,11 @@ class TrinketLootItem(LootItem):
                 )
             ) + ')'
         ])
+
+
+class GameLog(models.Model):
+    """Game log class."""
+
+    game_log = models.TextField(
+        default="<p>Game log start.</p>"
+    )

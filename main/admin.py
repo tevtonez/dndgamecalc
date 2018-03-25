@@ -3,6 +3,7 @@ from django.contrib import admin
 
 from main.models import(
     ArmorLootItem,
+    GameLog,
     PlayerCharacter,
     MonsterCharacter,
     TrinketLootItem,
@@ -10,6 +11,7 @@ from main.models import(
 )
 
 admin.site.register(ArmorLootItem)
+admin.site.register(GameLog)
 admin.site.register(PlayerCharacter)
 admin.site.register(MonsterCharacter)
 admin.site.register(TrinketLootItem)

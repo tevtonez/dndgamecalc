@@ -10,7 +10,7 @@
     <!-- Please log in! -->
 {% endif %}
 
-{% if not players or not monsters%}
+{% if not players or not game_log%}
     <p>Please, start game first.</p>
     <p><a href="" class="btn btn-info">Start game.</a></p>
 {% else %}
@@ -41,13 +41,17 @@
             <div class="col-sm-2 monster-attack">
             {% if monster.character_race != 'bar' %}
                 {% for player in players  %}
-                    <p><a href="{% url 'main:combat' attacker_id=monster.id victim_id=player.id monster_hit=1%}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> {{player}}</a></p>
+                    {% if not player.knocked_down %}
+                        <p><a href="{% url 'main:combat' attacker_id=monster.id victim_id=player.id monster_hit=1%}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> {{player}}</a></p>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             </div>
             <div class="col-sm-2 monster-attack">
                 {% for player in players  %}
-                    <p><a href="{% url 'main:combat' attacker_id=player.id victim_id=monster.id monster_hit=0%}" title="Vincent attacks monster">{{player}} <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                    {% if not player.knocked_down %}
+                        <p><a href="{% url 'main:combat' attacker_id=player.id victim_id=monster.id monster_hit=0%}" title="Vincent attacks monster">{{player}} <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                    {% endif %}
                 {% endfor %}
 
             </div>
@@ -57,20 +61,13 @@
             </div>
 
         {% empty %}
-            Add monsters using form down below --->
+            Add monsters using form down below
         {% endfor %}
         </div> <!-- monsters-list -->
 
         <div class="col-sm-12"><h3>Game Log:</h3></div>
         <div class="col-sm-12" id="log-display">
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
-            <p>A log will be displayed here...</p>
+            {{game_log.game_log|safe}}
         </div>
         <div class="col-sm-12 add-monsters">
             <div class="col-sm-12"><h3>Add monsters to game:</h3></div>

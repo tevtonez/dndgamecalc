@@ -47,3 +47,14 @@ h3{
 .btn .fa{
     color: #fff;
 }
+
+/* GAME LOG */
+.hero-hit,
+.monster-hit{
+    color:red;
+    font-weight: bold;
+}
+
+.monster-hit{
+    color:green;
+}

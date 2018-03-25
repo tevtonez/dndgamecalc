@@ -19,9 +19,10 @@ from django.views.generic import (
 # from django.contrib.auth.decorators import login_required
 from main import forms
 
-from main.helpers.common import find_value
+# from main.helpers.common import find_value
 
 from main.models import (
+    GameLog,
     MonsterCharacter,
     PlayerCharacter,
 )
@@ -113,6 +114,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
+        # getting players
         try:
             duke = PlayerCharacter.objects.get(name='Vincent')
             dadrin = PlayerCharacter.objects.get(name='Dadrin')
@@ -121,13 +123,17 @@ class IndexView(TemplateView):
             context['players'] = None
             return context
 
+        # getting monsters
+        monsters_list = MonsterCharacter.objects.all().order_by('-id')
+
+        # getting log
         try:
-            monsters_list = MonsterCharacter.objects.all().order_by('-id')
+            game_log = GameLog.objects.get(pk=1)
         except:
-            context['monsters'] = None
-            return context
+            game_log = None
 
         context['players'] = [duke, dadrin, idrill]
+        context['game_log'] = game_log
         context['monsters'] = monsters_list
         context['monsters_count'] = len(monsters_list.filter(monster=True))
         context['objects_count'] = len(monsters_list.filter(monster=False))
@@ -263,6 +269,13 @@ class CombatView(View):
         victim_id = int(self.kwargs['victim_id'])
         monster_hit = self.kwargs['monster_hit']
 
+        # getting game log
+        try:
+            game_log = GameLog.objects.get(pk=1)
+        except:
+            game_log = None
+            return redirect('home')
+
         if monster_hit == '1':
             attacker = MonsterCharacter.objects.get(id=attacker_id)
             victim = PlayerCharacter.objects.get(id=victim_id)
@@ -281,7 +294,7 @@ class CombatView(View):
         if damage_dealt >= victim.armor:
 
             if monster_hit == '1':
-                msg_to_log = '{3} looses 1HP! \n{0} #{1} dealt damage {2}{4}'.format(
+                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span><br>{0} #{1} dealt damage {2}{4}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
                     attacker,
                     attacker.name,
@@ -293,10 +306,10 @@ class CombatView(View):
                 if dies:
                     victim.knocked_down = True
                     victim.save()
-                    msg_to_log += "\n{} knocked down!\nRespawn in camp in 2 rounds.".format(victim)
+                    msg_to_log += '<p class="hero-hit">{} knocked down! Respawn in camp in 2 rounds.</p><br>'.format(victim)
 
             else:
-                msg_to_log = '{2} looses 1HP! \n{0} dealt damage {1}{3}'.format(
+                msg_to_log = '<p><span class="monster-hit">{2} looses 1HP!</span><br>{0} dealt damage {1}{3}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
                     attacker,
                     damage_dealt,
@@ -307,14 +320,15 @@ class CombatView(View):
                 dies = victim_dies(victim)
                 if dies:
                     victim.delete()
-                    msg_to_log += "\n{} dies!".format(victim)
+                    msg_to_log += '<p class="monster-hit">{} dies!</p><br>'.format(victim)
 
         else:
-            msg_to_log = '{} misses...'.format(
+            msg_to_log = '<p>{} misses...</p>'.format(
                 attacker
             )
-
-        print(msg_to_log)
+        game_log.game_log = msg_to_log + '\n' + game_log.game_log
+        # print(msg_to_log)
+        game_log.save()
 
         return redirect('home')
 
