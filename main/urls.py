@@ -1,10 +1,10 @@
 from django.conf.urls import url
 
 from main.views import (
-    MonsterAttacksView,
+    CombatView,
     MonsterCreateView,
     MonsterDeleteView,
-    PlayerAttacksView,
+    RespawnPlayer,
 )
 
 app_name = 'main'
@@ -26,14 +26,13 @@ urlpatterns = [
     ),
     # monster attacks a player
     url(
-        r'^monster-attacks/(?P<monster_id>\d*)/(?P<player_attacked>.*)$',
-        MonsterAttacksView.as_view(),
-        name='monster_attacks'
+        r'^combat/(?P<attacker_id>\d*)/(?P<victim_id>\d*)/(?P<monster_hit>(1|0))$',
+        CombatView.as_view(),
+        name='combat'
     ),
-    # player attacks a monster
     url(
-        r'^player-attacks/(?P<player>.*)/(?P<monster_id>\d*)$',
-        PlayerAttacksView.as_view(),
-        name='player_attacks'
-    ),
+        r'^respawn_player/(?P<player_id>\d*)$',
+        RespawnPlayer.as_view(),
+        name='respawn_player'
+    )
 ]

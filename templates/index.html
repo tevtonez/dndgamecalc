@@ -10,6 +10,11 @@
     <!-- Please log in! -->
 {% endif %}
 
+{% if not players or not monsters%}
+    <p>Please, start game first.</p>
+    <p><a href="" class="btn btn-info">Start game.</a></p>
+{% else %}
+
 <div class="row">
     <div class="col-sm-6 left-col">
         <h3>Monsters ({{monsters_count}}) and Objects ({{objects_count}})</h3>
@@ -25,7 +30,7 @@
                 <p>{{monster}} {% if monster.name != '' %}
                     <strong>#{{monster.name}}</strong>
                 {% endif %} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
-                <p>AR: {{monster.armor}}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}</p>
+                <p>AR: {{monster.armor}}{% if monster.monster %}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}{% endif %}</p>
                 <div class="monster-health">
                     {% for _ in "x"|ljust:monster.health %}
                         <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
@@ -35,16 +40,18 @@
 
             <div class="col-sm-2 monster-attack">
             {% if monster.character_race != 'bar' %}
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='vin' %}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> Vincent</a></p>
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='dad' %}" title="Monster attacks Dadril"><img src="{% static "images/bite.png" %}" alt="" width=24> Dadril</a></p>
-                <p><a href="{% url 'main:monster_attacks' monster_id=monster.id player_attacked='idr' %}" title="Monster attacks Idrill"><img src="{% static "images/bite.png" %}" alt="" width=24> Idrill</a></p>
+                {% for player in players  %}
+                    <p><a href="{% url 'main:combat' attacker_id=monster.id victim_id=player.id monster_hit=1%}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> {{player}}</a></p>
+                {% endfor %}
             {% endif %}
             </div>
             <div class="col-sm-2 monster-attack">
-                <p><a href="{% url 'main:player_attacks' player='vin' monster_id=monster.id %}" title="Vincent attacks monster">Vincent <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                <p><a href="{% url 'main:player_attacks' player='dad' monster_id=monster.id %}" title="Dadril attacks monster">Dadril <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                <p><a href="{% url 'main:player_attacks' player='idr' monster_id=monster.id %}" title="Idrill attacks monster">Idrill <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                {% for player in players  %}
+                    <p><a href="{% url 'main:combat' attacker_id=player.id victim_id=monster.id monster_hit=0%}" title="Vincent attacks monster">{{player}} <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                {% endfor %}
+
             </div>
+
             <div class="col-sm-12">
                 <hr>
             </div>
@@ -90,7 +97,7 @@
             {% for player in players %}
             <div class="col-sm-4 player">
                 <div>
-                    {% if player.name == 'Duke Vincent' %}
+                    {% if player.name == 'Vincent' %}
                         <img src="{% static "images/duke.png" %}" height="200" alt="">
                     {% elif player.name == 'Dadrin' %}
                         <img src="{% static "images/dadrin.png" %}" height="200" alt="">
@@ -99,9 +106,13 @@
                     {% endif %}
 
                     <div class="player-health">
-                        {% for _ in "x"|ljust:player.health %}
-                            <span class="fa fa-heart" style="font-size:24px;color:red;"></span>
-                        {% endfor %}
+                        {% if not player.knocked_down %}
+                            {% for _ in "x"|rjust:player.health %}
+                                <span class="fa fa-heart" style="font-size:24px;color:red;"></span>
+                            {% endfor %}
+                        {% else %}
+                            <a href="{% url 'main:respawn_player' player.id %}" class="btn btn-danger">RESPAWN</a>
+                        {% endif %}
                     </div>
                     <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
                     <p>AR: {{player.armor}}</p>
@@ -149,6 +160,8 @@ function changeLink() {
     return false;
 }
 </script>
+
+{% endif %}
 
 {% endblock %}
 

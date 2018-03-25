@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import (
     # render,
     redirect,
@@ -16,6 +18,8 @@ from django.views.generic import (
 )
 # from django.contrib.auth.decorators import login_required
 from main import forms
+
+from main.helpers.common import find_value
 
 from main.models import (
     MonsterCharacter,
@@ -41,12 +45,12 @@ def monster_create(
     health,
     armor,
     character_description,
+    monster,
     attack_range=0,
     attack_modifier=0,
     speed=0,
     character_level=1,
     attack=3,
-    monster=True
 ):
     """Create monster."""
     for i in range(x_times):
@@ -69,6 +73,30 @@ def monster_create(
     return m
 
 
+def calculate_damage(dices):
+    """Calculate dealt damage."""
+    resulting_damage = 0
+    dices_dealt = []
+
+    for _ in range(dices):
+        dice_damage = random.randint(1, 6)
+        resulting_damage += dice_damage
+        dices_dealt.append(dice_damage)
+
+    return resulting_damage, dices_dealt
+
+
+def victim_dies(victim):
+    """Check if attacked player/creature has enough of health."""
+    if victim.health >= 2:
+        victim.health -= 1
+        victim.save()
+        return False
+
+    elif victim.health == 1:
+        return True
+
+
 class SignUpView(CreateView):
     """Signup users view."""
 
@@ -85,11 +113,19 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
 
-        duke = PlayerCharacter.objects.get(name='Duke Vincent')
-        dadrin = PlayerCharacter.objects.get(name='Dadrin')
-        idrill = PlayerCharacter.objects.get(name='Idrill')
+        try:
+            duke = PlayerCharacter.objects.get(name='Vincent')
+            dadrin = PlayerCharacter.objects.get(name='Dadrin')
+            idrill = PlayerCharacter.objects.get(name='Idrill')
+        except:
+            context['players'] = None
+            return context
 
-        monsters_list = MonsterCharacter.objects.all().order_by('-id')
+        try:
+            monsters_list = MonsterCharacter.objects.all().order_by('-id')
+        except:
+            context['monsters'] = None
+            return context
 
         context['players'] = [duke, dadrin, idrill]
         context['monsters'] = monsters_list
@@ -135,6 +171,7 @@ class MonsterCreateView(View):
             attack = 3
             attack_range = 1
             attack_modifier = 0
+            monster = True
             character_description = "A walking skeleton, with some withered flesh on its bones.\nThe very appearance of this creation infuses an endless paralyzing horror in everyone who sees it. The chilling look of the empty eye sockets of the skeleton penetrates right into the soul, emptying it and depleting the strength of living beings."
 
         # creating Skeleton lev.2
@@ -149,6 +186,7 @@ class MonsterCreateView(View):
             attack = 3  # 3d6
             attack_range = 1
             attack_modifier = 0
+            monster = True
             character_description = "A walking skeleton, with a rusty chipped sword with huge nicks here and there on its blade.\nThis fast and fierce monster inhabits the darkest levels of Skeleton cave where it has the most of the advantage by attacking adventurers from the dark."
 
         # creating Archer Skeleton lev.2
@@ -163,6 +201,7 @@ class MonsterCreateView(View):
             attack = 3  # 3d6
             attack_range = 5
             attack_modifier = 0
+            monster = True
             character_description = "A walking skeleton, with a strong bow.\nThis silent monster kills quickly with precise shots. Its victims never know what killed them."
 
         # creating Spider lev.1
@@ -177,6 +216,7 @@ class MonsterCreateView(View):
             attack = 2  # 2d6
             attack_range = 1
             attack_modifier = 0
+            monster = True
             character_description = "A shiny black fat spider with hairy paws.\nHis black, shining eyes are staring at you, and fluorescing in the dark poison is dripping from its fangs."
 
         # creating Flying Spinner - the Boss
@@ -191,6 +231,7 @@ class MonsterCreateView(View):
             attack = 3  # 3d6
             attack_range = 1
             attack_modifier = 1
+            monster = True
             character_description = "Run, you fulls!!!"
 
         monster_create(
@@ -211,26 +252,69 @@ class MonsterCreateView(View):
         return redirect('home')
 
 
-class PlayerAttacksView(View):
-    """Player Attacks a Monster view."""
-
-    def get(self, request, *args, **kwargs):
-        player = self.kwargs['player']
-        monster_id = self.kwargs['monster_id']
-        print(player)
-        print(monster_id)
-
-        return redirect('home')
-
-
-class MonsterAttacksView(View):
+class CombatView(View):
     """Monster Attacks a Player view."""
 
     def get(self, request, *args, **kwargs):
-        player_attacked = self.kwargs['player_attacked']
-        monster_id = self.kwargs['monster_id']
-        print(player_attacked)
-        print(monster_id)
+        msg_to_log = ''
+
+        # getting combatants
+        attacker_id = int(self.kwargs['attacker_id'])
+        victim_id = int(self.kwargs['victim_id'])
+        monster_hit = self.kwargs['monster_hit']
+
+        if monster_hit == '1':
+            attacker = MonsterCharacter.objects.get(id=attacker_id)
+            victim = PlayerCharacter.objects.get(id=victim_id)
+        else:
+            attacker = PlayerCharacter.objects.get(id=attacker_id)
+            victim = MonsterCharacter.objects.get(id=victim_id)
+
+        attack_dices = attacker.attack
+
+        # getting damage value and dices' numbers
+        damage = calculate_damage(attack_dices)
+        damage_dealt = damage[0] + attacker.attack_modifier
+        attack_dices = damage[1]
+
+        # validating attack success
+        if damage_dealt >= victim.armor:
+
+            if monster_hit == '1':
+                msg_to_log = '{3} looses 1HP! \n{0} #{1} dealt damage {2}{4}'.format(
+                    # find_value(attacker.RACE, attacker.character_race),
+                    attacker,
+                    attacker.name,
+                    damage_dealt,
+                    victim,
+                    attack_dices,
+                )
+                dies = victim_dies(victim)
+                if dies:
+                    victim.knocked_down = True
+                    victim.save()
+                    msg_to_log += "\n{} knocked down!\nRespawn in camp in 2 rounds.".format(victim)
+
+            else:
+                msg_to_log = '{2} looses 1HP! \n{0} dealt damage {1}{3}'.format(
+                    # find_value(attacker.RACE, attacker.character_race),
+                    attacker,
+                    damage_dealt,
+                    victim,
+                    attack_dices,
+                )
+                # checking victim's previous health
+                dies = victim_dies(victim)
+                if dies:
+                    victim.delete()
+                    msg_to_log += "\n{} dies!".format(victim)
+
+        else:
+            msg_to_log = '{} misses...'.format(
+                attacker
+            )
+
+        print(msg_to_log)
 
         return redirect('home')
 
@@ -242,6 +326,22 @@ class MonsterDeleteView(View):
         monster_id = self.kwargs['monster_id']
 
         monster_delete(monster_id)
+
+        return redirect('home')
+
+
+class RespawnPlayer(View):
+    """Respawn player."""
+
+    def get(self, request, *args, **kwargs):
+        player_id = self.kwargs['player_id']
+        try:
+            player = PlayerCharacter.objects.get(id=player_id)
+            player.health = player.respawn_health
+            player.knocked_down = False
+            player.save()
+        except:
+            return redirect('home')
 
         return redirect('home')
 

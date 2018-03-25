@@ -13,6 +13,7 @@ class Character(models.Model):
 
     name = models.CharField(max_length=150)
     health = models.IntegerField(default=4)
+    respawn_health = models.IntegerField(default=4)
     armor = models.IntegerField(default=5)
     attack = models.IntegerField(default=3)
     attack_range = models.IntegerField(default=0)
@@ -29,6 +30,18 @@ class PlayerCharacter(Character):
     """Main class for all characters in the game."""
 
     player = models.BooleanField(default=True)
+    knocked_down = models.BooleanField(default=False)
+
+    PLAYER_IDS = (
+        ('vin', 'Duke Vincent'),
+        ('dad', 'Dadrin'),
+        ('idr', 'Idrill'),
+    )
+    player_id = models.CharField(
+        choices=PLAYER_IDS,
+        default='vin',
+        max_length=3
+    )
 
     RACE = (
         ('hum', 'Human'),
@@ -43,10 +56,12 @@ class PlayerCharacter(Character):
 
     def __str__(self):
         """Object string representation."""
-        return ' '.join([
-            str(self.name),
-            str(find_value(self.RACE, self.character_race)),
-        ])
+        # return ' '.join([
+        #     str(self.name),
+        #     str(find_value(self.RACE, self.character_race)),
+        # ])
+
+        return str(self.name)
 
 
 class MonsterCharacter(Character):
@@ -70,7 +85,7 @@ class MonsterCharacter(Character):
     def __str__(self):
         """Object string representation."""
         if self.character_race not in ['bar', 'fsp']:
-            full_info = ' (lv.' + str(self.character_level) + ')'
+            full_info = '(lv.' + str(self.character_level) + ')'
         else:
             full_info = ''
 

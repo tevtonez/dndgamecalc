@@ -4,12 +4,15 @@ from main.models import (
     PlayerCharacter
 )
 
+base_health = 4
+
 
 # GENERATING PLAYERS
 duke = PlayerCharacter(
-    name='Duke Vincent',
-    health='4',
-    armor='7',
+    name='Vincent',
+    health=base_health,
+    respawn_health=base_health,
+    armor=7,
     attack_range=0,
     attack_modifier=2,
     speed=5,
@@ -19,8 +22,9 @@ duke.save()
 
 dadrin = PlayerCharacter(
     name='Dadrin',
-    health='5',
-    armor='6',
+    health=base_health + 1,
+    respawn_health=base_health + 1,
+    armor=6,
     attack_range=0,
     attack_modifier=3,
     speed=4,
@@ -31,8 +35,9 @@ dadrin.save()
 
 idrill = PlayerCharacter(
     name='Idrill',
-    health='4',
-    armor='5',
+    health=base_health,
+    respawn_health=base_health,
+    armor=5,
     attack_range=4,
     attack_modifier=1,
     speed=7,
