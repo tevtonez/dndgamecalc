@@ -294,7 +294,7 @@ class CombatView(View):
         if damage_dealt >= victim.armor:
 
             if monster_hit == '1':
-                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span><br>{0} #{1} dealt damage {2}{4}</p>'.format(
+                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span><br>{0} #{1} dealt damage {2} {4}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
                     attacker,
                     attacker.name,
@@ -309,25 +309,35 @@ class CombatView(View):
                     msg_to_log += '<p class="hero-hit">{} knocked down! Respawn in camp in 2 rounds.</p><br>'.format(victim)
 
             else:
-                msg_to_log = '<p><span class="monster-hit">{2} looses 1HP!</span><br>{0} dealt damage {1}{3}</p>'.format(
+                msg_to_log = '<p><span class="monster-hit">{0} <strong>#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
+                    victim,
+                    victim.name,
                     attacker,
                     damage_dealt,
-                    victim,
                     attack_dices,
                 )
                 # checking victim's previous health
                 dies = victim_dies(victim)
                 if dies:
                     victim.delete()
-                    msg_to_log += '<p class="monster-hit">{} dies!</p><br>'.format(victim)
+                    msg_to_log += '<p class="monster-hit">{} <strong>#{}</strong> dies!</p><br>'.format(
+                        victim,
+                        victim.name
+                    )
 
         else:
+            if monster_hit == '1':
+                attacker_display_name = str(attacker) + \
+                    " <strong>#" + str(attacker.name) + "</strong>"
+            else:
+                attacker_display_name = attacker
+
             msg_to_log = '<p>{} misses...</p>'.format(
-                attacker
+                attacker_display_name
             )
-        game_log.game_log = msg_to_log + '\n' + game_log.game_log
-        # print(msg_to_log)
+        game_log.game_log = msg_to_log + game_log.game_log
+
         game_log.save()
 
         return redirect('home')
@@ -354,6 +364,18 @@ class RespawnPlayer(View):
             player.health = player.respawn_health
             player.knocked_down = False
             player.save()
+
+            # getting game log
+            try:
+                game_log = GameLog.objects.get(pk=1)
+            except:
+                game_log = None
+                return redirect('home')
+
+            msg_to_log = '<p class="monster-hit">{} respawned!</p>'.format(player)
+            game_log.game_log = msg_to_log + game_log.game_log
+            game_log.save()
+
         except:
             return redirect('home')
 

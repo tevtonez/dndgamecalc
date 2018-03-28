@@ -197,6 +197,20 @@ class WeaponLootItem(LootItem):
         max_length=2
     )
 
+    wpn_equipped_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='wpn_equipped_by'
+    )
+
+    wpn_found_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='wpn_found_by'
+    )
+
     def __str__(self):
         """Object string representation."""
         return ' '.join([
@@ -274,6 +288,20 @@ class ArmorLootItem(LootItem):
         max_length=2
     )
 
+    arm_equipped_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='arm_equipped_by'
+    )
+
+    arm_found_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='arm_found_by'
+    )
+
     def __str__(self):
         """Object string representation."""
         if self.modificator_negative == '0':
@@ -345,6 +373,20 @@ class TrinketLootItem(LootItem):
         choices=TRN_BONUSES_TO,
         default='ar',
         max_length=2
+    )
+
+    trinket_equipped_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='trinket_equipped_by'
+    )
+
+    trinket_found_by = models.ForeignKey(
+        PlayerCharacter,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='trinket_found_by'
     )
 
     def __str__(self):
