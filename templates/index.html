@@ -65,10 +65,6 @@
         {% endfor %}
         </div> <!-- monsters-list -->
 
-        <div class="col-sm-12"><h3>Game Log:</h3></div>
-        <div class="col-sm-12" id="log-display">
-            {{game_log.game_log|safe}}
-        </div>
         <div class="col-sm-12 add-monsters">
             <div class="col-sm-12"><h3>Add monsters to game:</h3></div>
             <div class="col-sm-7">
@@ -127,6 +123,14 @@
             </div> <!-- player -->
             {% endfor %}
         </div> <!--  players-list -->
+        <div class="log-wrapper col-sm-12">
+            <h3>Game Log:</h3>
+            <div id="log-display">
+                {{game_log.game_log|safe}}
+            </div>
+        </div>
+
+
     </div>
 
 

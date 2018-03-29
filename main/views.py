@@ -36,7 +36,10 @@ def monster_delete(id):
         m = None
 
     if m:
+        m_race_name = " ".join([str(m), '#' + str(m.name)])
         m.delete()
+
+    return m_race_name
 
 
 def monster_create(
@@ -96,6 +99,21 @@ def victim_dies(victim):
 
     elif victim.health == 1:
         return True
+
+
+def add_to_game_log(game_log, msg_to_log):
+    """Add msg_to_log string to the top of game_log."""
+    game_log.game_log = msg_to_log + game_log.game_log
+    game_log.save()
+
+def get_game_log(pk):
+    """Take GameLog.pk and return GameLog object"""
+    try:
+        game_log = GameLog.objects.get(pk=pk)
+        return game_log
+    except:
+        game_log = None
+        return redirect('home')
 
 
 class SignUpView(CreateView):
@@ -240,7 +258,7 @@ class MonsterCreateView(View):
             monster = True
             character_description = "Run, you fulls!!!"
 
-        monster_create(
+        m_created = monster_create(
             x_times,
             name,
             race,
@@ -254,6 +272,13 @@ class MonsterCreateView(View):
             attack=attack,
             monster=monster
         )
+
+        # getting game log
+        game_log = get_game_log(1)
+
+        if m_created:
+            msg_to_log = '<p class="neutral-msg">{} #{} added to the game board.</p>'.format(m_created, m_created.name)
+            add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
 
@@ -270,11 +295,7 @@ class CombatView(View):
         monster_hit = self.kwargs['monster_hit']
 
         # getting game log
-        try:
-            game_log = GameLog.objects.get(pk=1)
-        except:
-            game_log = None
-            return redirect('home')
+        game_log = get_game_log(1)
 
         if monster_hit == '1':
             attacker = MonsterCharacter.objects.get(id=attacker_id)
@@ -309,22 +330,31 @@ class CombatView(View):
                     msg_to_log += '<p class="hero-hit">{} knocked down! Respawn in camp in 2 rounds.</p><br>'.format(victim)
 
             else:
-                msg_to_log = '<p><span class="monster-hit">{0} <strong>#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
-                    # find_value(attacker.RACE, attacker.character_race),
-                    victim,
-                    victim.name,
-                    attacker,
-                    damage_dealt,
-                    attack_dices,
-                )
+                if victim.character_race != 'bar':
+                    msg_to_log = '<p><span class="monster-hit">{0} <strong>#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
+                        # find_value(attacker.RACE, attacker.character_race),
+                        victim,
+                        victim.name,
+                        attacker,
+                        damage_dealt,
+                        attack_dices,
+                    )
                 # checking victim's previous health
                 dies = victim_dies(victim)
                 if dies:
                     victim.delete()
-                    msg_to_log += '<p class="monster-hit">{} <strong>#{}</strong> dies!</p><br>'.format(
-                        victim,
-                        victim.name
-                    )
+                    if victim.character_race != 'bar':
+                        msg_to_log += '<p class="monster-hit">{} <strong>#{}</strong> dies!</p><br>'.format(
+                            victim,
+                            victim.name
+                        )
+                    else:
+                        msg_to_log += '<p><span class="monster-hit">{} is destroyed!</span><br>{} dealt damage {} {}</p></p><br>'.format(
+                            victim,
+                            attacker,
+                            damage_dealt,
+                            attack_dices,
+                        )
 
         else:
             if monster_hit == '1':
@@ -336,9 +366,7 @@ class CombatView(View):
             msg_to_log = '<p>{} misses...</p>'.format(
                 attacker_display_name
             )
-        game_log.game_log = msg_to_log + game_log.game_log
-
-        game_log.save()
+        add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
 
@@ -349,7 +377,20 @@ class MonsterDeleteView(View):
     def get(self, request, *args, **kwargs):
         monster_id = self.kwargs['monster_id']
 
-        monster_delete(monster_id)
+        try:
+            m = MonsterCharacter.objects.get(id=monster_id)
+        except:
+            m = None
+            return redirect('home')
+
+        m_deleted = monster_delete(monster_id)
+
+        # getting game log
+        game_log = get_game_log(1)
+
+        if m:
+            msg_to_log = '<p class="neutral-msg">{} removed from the game board.</p>'.format(m_deleted)
+            add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
 
@@ -366,15 +407,10 @@ class RespawnPlayer(View):
             player.save()
 
             # getting game log
-            try:
-                game_log = GameLog.objects.get(pk=1)
-            except:
-                game_log = None
-                return redirect('home')
+            game_log = get_game_log(1)
 
             msg_to_log = '<p class="monster-hit">{} respawned!</p>'.format(player)
-            game_log.game_log = msg_to_log + game_log.game_log
-            game_log.save()
+            add_to_game_log(game_log, msg_to_log)
 
         except:
             return redirect('home')

@@ -58,3 +58,13 @@ h3{
 .monster-hit{
     color:green;
 }
+
+.neutral-msg{
+    color: #afaeae;
+}
+
+#monsters-list strong,
+.monster-hit strong{
+    font-size: 20px;
+}
+
