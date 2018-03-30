@@ -1,3 +1,5 @@
+"""Board game calc views."""
+
 import random
 
 from django.shortcuts import (
@@ -106,8 +108,9 @@ def add_to_game_log(game_log, msg_to_log):
     game_log.game_log = msg_to_log + game_log.game_log
     game_log.save()
 
+
 def get_game_log(pk):
-    """Take GameLog.pk and return GameLog object"""
+    """Take GameLog.pk and return GameLog object."""
     try:
         game_log = GameLog.objects.get(pk=pk)
         return game_log
@@ -130,6 +133,7 @@ class IndexView(TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
+        """get_context_data."""
         context = super(IndexView, self).get_context_data(**kwargs)
 
         # getting players
@@ -399,6 +403,7 @@ class RespawnPlayer(View):
     """Respawn player."""
 
     def get(self, request, *args, **kwargs):
+        """Process method GET."""
         player_id = self.kwargs['player_id']
         try:
             player = PlayerCharacter.objects.get(id=player_id)
