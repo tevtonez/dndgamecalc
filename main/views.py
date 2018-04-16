@@ -522,6 +522,7 @@ class ItemEquipView(TemplateView):
         item_class = self.kwargs['item_class']
         action = self.kwargs['action']
         game_log = get_game_log(1)
+        equip_action = 'equipped' if action == '1' else 'put off'
 
         if item_class == '1':
             try:
@@ -557,7 +558,12 @@ class ItemEquipView(TemplateView):
         item.save()
 
         # adding event to the logger
-        msg_to_log = '<p class="neutral-msg">{} equipped {}</p>'.format(player.name, item)
+        msg_to_log = '<p class="neutral-msg">{} {} {}</p>'.format(
+            player.name,
+            equip_action,
+            item
+        )
+
         add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
