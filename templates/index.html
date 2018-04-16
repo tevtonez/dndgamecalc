@@ -117,8 +117,31 @@
                         {{player.character_description}}
                     </div>
                     <div class="inventory">
-                        {% if player %}
+                        <h3>Weapon</h3>
+                        {% if player.wpn_owned_by.all|length > 0 %}
+                            {% for item in player.wpn_owned_by.all %}
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                            {% endfor %}
+                        {% else %}
+                            <p>Empty...</p>
+                        {% endif %}
 
+                        <h3>Armor</h3>
+                        {% if player.arm_owned_by.all|length > 0 %}
+                            {% for item in player.arm_owned_by.all %}
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                            {% endfor %}
+                        {% else %}
+                            <p>Empty...</p>
+                        {% endif %}
+
+                        <h3>Trinkets</h3>
+                        {% if player.trinket_owned_by.all|length > 0 %}
+                            {% for item in player.trinket_owned_by.all %}
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                            {% endfor %}
+                        {% else %}
+                            <p>Empty...</p>
                         {% endif %}
                     </div>
                 </div>

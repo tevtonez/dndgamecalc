@@ -154,6 +154,7 @@ class LootItem(models.Model):
 
     item_level = models.IntegerField(default=1)
     item_dropped = models.BooleanField(default=False)
+    item_equipped = models.BooleanField(default=False)
 
 
 class WeaponLootItem(LootItem):
@@ -197,11 +198,11 @@ class WeaponLootItem(LootItem):
         max_length=2
     )
 
-    wpn_equipped_by = models.ForeignKey(
+    wpn_owned_by = models.ForeignKey(
         PlayerCharacter,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='wpn_equipped_by'
+        related_name='wpn_owned_by'
     )
 
     wpn_found_by = models.ForeignKey(
@@ -288,11 +289,11 @@ class ArmorLootItem(LootItem):
         max_length=2
     )
 
-    arm_equipped_by = models.ForeignKey(
+    arm_owned_by = models.ForeignKey(
         PlayerCharacter,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='arm_equipped_by'
+        related_name='arm_owned_by'
     )
 
     arm_found_by = models.ForeignKey(
@@ -375,11 +376,11 @@ class TrinketLootItem(LootItem):
         max_length=2
     )
 
-    trinket_equipped_by = models.ForeignKey(
+    trinket_owned_by = models.ForeignKey(
         PlayerCharacter,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='trinket_equipped_by'
+        related_name='trinket_owned_by'
     )
 
     trinket_found_by = models.ForeignKey(

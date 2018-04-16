@@ -4,7 +4,7 @@ body{
 
 h3{
     margin: 10px 0;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .add-monsters input{
@@ -79,4 +79,13 @@ h3{
     0% {color: #09a509;}
     33% {color: #ffb501;}
     100% {color: #09a509;}
+}
+
+.inventory{}
+.inventory-item{
+    font-size: 12px;
+}
+
+.inventory-item span{
+    font-size: 16px;
 }

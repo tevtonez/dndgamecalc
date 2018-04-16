@@ -109,12 +109,13 @@ def victim_dies(victim):
 def drop_item(attacker, victim):
     """Generate dropped item after a monster/barrel kill."""
     item_type = random.randrange(1, 999)
+    item = []
 
-    if item_type <= 400:
+    if item_type <= 350:
         item = WeaponLootItem.objects.filter(item_dropped=False)
-    elif 400 < item_type <= 800:
+    elif 400 < item_type <= 750:
         item = ArmorLootItem.objects.filter(item_dropped=False)
-    else:
+    elif 800 < item_type <= 999:
         item = TrinketLootItem.objects.filter(item_dropped=False)
 
     if len(item) != 0:
@@ -123,15 +124,16 @@ def drop_item(attacker, victim):
 
         # add item to attacker inventory
         if type(loot_item).__name__ == 'WeaponLootItem':
-            loot_item.wpn_equipped_by = loot_item.wpn_found_by = attacker
+            loot_item.wpn_owned_by = loot_item.wpn_found_by = attacker
 
         elif type(loot_item).__name__ == 'ArmorLootItem':
-            loot_item.arm_equipped_by = loot_item.arm_found_by = attacker
+            loot_item.arm_owned_by = loot_item.arm_found_by = attacker
 
         elif type(loot_item).__name__ == 'TrinketLootItem':
-            loot_item.trinket_equipped_by = loot_item.trinket_found_by = attacker
+            loot_item.trinket_owned_by = loot_item.trinket_found_by = attacker
 
         loot_item.save()
+
     else:
         loot_item = "None"
 
