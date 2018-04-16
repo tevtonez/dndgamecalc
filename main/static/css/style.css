@@ -7,6 +7,10 @@ h3{
     font-size: 18px;
 }
 
+hr{
+    margin:3px 0;
+}
+
 .add-monsters input{
     width: 40px;
 }
