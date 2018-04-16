@@ -107,43 +107,46 @@
                             <a href="{% url 'main:respawn_player' player.id %}" class="btn btn-danger">Respawn <span class="fa fa-heartbeat"></span></a>
                         {% endif %}
                     </div>
-                    <h3>{{player.name}} <span>({{player.get_character_race_display}})</span></h3>
+                    <h3><a data-toggle="collapse" data-target="#demo-{{player.id}}">{{player.name}} <span>({{player.get_character_race_display}})</span></a></h3>
+
+                    <div id="demo-{{player.id}}" class="collapse player-info">
+                        {{player.character_description}}
+                    </div>
+
                     <p>AR: {{player.armor}}</p>
                     <p>AT: {{player.attack}}d6 + {{player.attack_modifier}}</p>
                     <p>SP: {{player.speed}}</p>
                     <p>RA: {{player.attack_range}}</p>
-                    <a data-toggle="collapse" data-target="#demo-{{player.id}}">Info</a>
-                    <div id="demo-{{player.id}}" class="collapse player-info">
-                        {{player.character_description}}
-                    </div>
+
                     <div class="inventory">
                         <h3>Weapon</h3>
                         {% if player.wpn_owned_by.all|length > 0 %}
                             {% for item in player.wpn_owned_by.all %}
-                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="{% url 'main:drop_item' player.id item.pk 1 %}"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
                             {% endfor %}
                         {% else %}
-                            <p>Empty...</p>
+                            <p>Empty</p>
                         {% endif %}
 
                         <h3>Armor</h3>
                         {% if player.arm_owned_by.all|length > 0 %}
                             {% for item in player.arm_owned_by.all %}
-                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="{% url 'main:drop_item' player.id item.pk 2 %}"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
                             {% endfor %}
                         {% else %}
-                            <p>Empty...</p>
+                            <p>Empty</p>
                         {% endif %}
 
                         <h3>Trinkets</h3>
                         {% if player.trinket_owned_by.all|length > 0 %}
                             {% for item in player.trinket_owned_by.all %}
-                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="#"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
+                                <p class="inventory-item">{% if item.equiped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}} <a href="{% url 'main:drop_item' player.id item.pk 3 %}"><span class="fa fa-trash"></span></a> <a href="#"><span class="fa fa-external-link-square"></span></a> <a href="#"><span class="fa fa-universal-access"></span></a></p>
                             {% endfor %}
                         {% else %}
-                            <p>Empty...</p>
+                            <p>Empty</p>
                         {% endif %}
-                    </div>
+                    </div><!-- inventory -->
+
                 </div>
             </div> <!-- player -->
             {% endfor %}

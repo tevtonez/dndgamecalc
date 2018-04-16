@@ -5,6 +5,7 @@ from main.views import (
     MonsterCreateView,
     MonsterDeleteView,
     RespawnPlayer,
+    ItemDropView,
 )
 
 app_name = 'main'
@@ -24,15 +25,22 @@ urlpatterns = [
         MonsterDeleteView.as_view(),
         name='delete_monster'
     ),
-    # monster attacks a player
+    # combat
     url(
         r'^combat/(?P<attacker_id>\d*)/(?P<victim_id>\d*)/(?P<monster_hit>(1|0))$',
         CombatView.as_view(),
         name='combat'
     ),
+    # respawn a player
     url(
         r'^respawn_player/(?P<player_id>\d*)$',
         RespawnPlayer.as_view(),
         name='respawn_player'
-    )
+    ),
+    # drop item from inventory
+    url(
+        r'^drop-item/(?P<player_id>\d*)/(?P<item_id>\d*)/(?P<item_class>\d*)$',
+        ItemDropView.as_view(),
+        name='drop_item'
+    ),
 ]
