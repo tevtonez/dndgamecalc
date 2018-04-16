@@ -6,6 +6,7 @@ from main.views import (
     MonsterDeleteView,
     RespawnPlayer,
     ItemDropView,
+    ItemEquipView,
 )
 
 app_name = 'main'
@@ -42,5 +43,11 @@ urlpatterns = [
         r'^drop-item/(?P<player_id>\d*)/(?P<item_id>\d*)/(?P<item_class>\d*)$',
         ItemDropView.as_view(),
         name='drop_item'
+    ),
+    # equip item
+    url(
+        r'^equip-item/(?P<player_id>\d*)/(?P<item_id>\d*)/(?P<item_class>\d*)/(?P<action>\d*)$',
+        ItemEquipView.as_view(),
+        name='equip_item'
     ),
 ]

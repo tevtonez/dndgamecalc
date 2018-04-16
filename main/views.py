@@ -479,7 +479,6 @@ class ItemDropView(TemplateView):
         game_log = get_game_log(1)
 
         if item_class == '1':
-            print('going ehre')
             try:
                 item = WeaponLootItem.objects.get(pk=item_id)
                 item.wpn_owned_by = None
@@ -491,7 +490,7 @@ class ItemDropView(TemplateView):
             try:
                 item = ArmorLootItem.objects.get(pk=item_id)
                 item.arm_owned_by = None
-                item.arm_equipped = False
+                item.item_equipped = False
             except:
                 pass
 
@@ -499,7 +498,7 @@ class ItemDropView(TemplateView):
             try:
                 item = TrinketLootItem.objects.get(pk=item_id)
                 item.trinket_owned_by = None
-                item.trinket_owned_by = False
+                item.item_equipped = False
             except:
                 pass
 
@@ -507,6 +506,58 @@ class ItemDropView(TemplateView):
 
         # adding event to the logger
         msg_to_log = '<p class="neutral-msg">{} dropped {}</p>'.format(player.name, item)
+        add_to_game_log(game_log, msg_to_log)
+
+        return redirect('home')
+
+
+class ItemEquipView(TemplateView):
+    """Drop item from user inventory."""
+
+    def get(self, request, *args, **kwargs):
+        """Process method GET."""
+        player_id = self.kwargs['player_id']
+        player = PlayerCharacter.objects.get(id=player_id)
+        item_id = self.kwargs['item_id']
+        item_class = self.kwargs['item_class']
+        action = self.kwargs['action']
+        game_log = get_game_log(1)
+
+        if item_class == '1':
+            try:
+                item = WeaponLootItem.objects.get(pk=item_id)
+                if action == '1':
+                    item.item_equipped = True
+                else:
+                    item.item_equipped = False
+
+            except:
+                pass
+
+        elif item_class == '2':
+            try:
+                item = ArmorLootItem.objects.get(pk=item_id)
+                if action == '1':
+                    item.item_equipped = True
+                else:
+                    item.item_equipped = False
+            except:
+                pass
+
+        elif item_class == '3':
+            try:
+                item = TrinketLootItem.objects.get(pk=item_id)
+                if action == '1':
+                    item.item_equipped = True
+                else:
+                    item.item_equipped = False
+            except:
+                pass
+
+        item.save()
+
+        # adding event to the logger
+        msg_to_log = '<p class="neutral-msg">{} equipped {}</p>'.format(player.name, item)
         add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
@@ -520,3 +571,14 @@ class MainIndexView(TemplateView):
 
 # def index(request):
 #     HttpResponse("hi there")
+
+
+##################################################
+#                      TODO
+##################################################
+
+# 1. dry equip, drop, pass views
+# 2. write bonuses calculation funct. for equip, drop, pass
+
+##################################################
+##################################################
