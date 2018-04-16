@@ -68,3 +68,15 @@ h3{
     font-size: 20px;
 }
 
+.monster-hit i{
+    color: #09a509;
+    animation-name: loot_item_anim;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes loot_item_anim{
+    0% {color: #09a509;}
+    33% {color: #ffb501;}
+    100% {color: #09a509;}
+}

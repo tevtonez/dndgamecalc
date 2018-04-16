@@ -24,9 +24,12 @@ from main import forms
 # from main.helpers.common import find_value
 
 from main.models import (
+    ArmorLootItem,
     GameLog,
     MonsterCharacter,
     PlayerCharacter,
+    TrinketLootItem,
+    WeaponLootItem,
 )
 
 
@@ -101,6 +104,38 @@ def victim_dies(victim):
 
     elif victim.health == 1:
         return True
+
+
+def drop_item(attacker, victim):
+    """Generate dropped item after a monster/barrel kill."""
+    item_type = random.randrange(1, 999)
+
+    if item_type <= 400:
+        item = WeaponLootItem.objects.filter(item_dropped=False)
+    elif 400 < item_type <= 800:
+        item = ArmorLootItem.objects.filter(item_dropped=False)
+    else:
+        item = TrinketLootItem.objects.filter(item_dropped=False)
+
+    if len(item) != 0:
+        loot_item = random.choice(item)
+        loot_item.item_dropped = True
+
+        # add item to attacker inventory
+        if type(loot_item).__name__ == 'WeaponLootItem':
+            loot_item.wpn_equipped_by = loot_item.wpn_found_by = attacker
+
+        elif type(loot_item).__name__ == 'ArmorLootItem':
+            loot_item.arm_equipped_by = loot_item.arm_found_by = attacker
+
+        elif type(loot_item).__name__ == 'TrinketLootItem':
+            loot_item.trinket_equipped_by = loot_item.trinket_found_by = attacker
+
+        loot_item.save()
+    else:
+        loot_item = "None"
+
+    return loot_item
 
 
 def add_to_game_log(game_log, msg_to_log):
@@ -291,6 +326,7 @@ class CombatView(View):
     """Monster Attacks a Player view."""
 
     def get(self, request, *args, **kwargs):
+        """Get method of view."""
         msg_to_log = ''
 
         # getting combatants
@@ -347,18 +383,23 @@ class CombatView(View):
                 dies = victim_dies(victim)
                 if dies:
                     victim.delete()
+
+                    # generate loot item dropped
+                    loot_item_drop = drop_item(attacker, victim)
                     if victim.character_race != 'bar':
-                        msg_to_log += '<p class="monster-hit">{} <strong>#{}</strong> dies!</p><br>'.format(
+                        msg_to_log = '<p class="monster-hit">{} <strong>#{}</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
                             victim,
-                            victim.name
-                        )
+                            victim.name,
+                            loot_item_drop
+                        ) + msg_to_log
                     else:
-                        msg_to_log += '<p><span class="monster-hit">{} is destroyed!</span><br>{} dealt damage {} {}</p></p><br>'.format(
+                        msg_to_log = '<p><span class="monster-hit">{} is destroyed!<br>Loot found: <i>{}</i></span><br>{} dealt damage {} {}</p></p><br>'.format(
                             victim,
+                            loot_item_drop,
                             attacker,
                             damage_dealt,
                             attack_dices,
-                        )
+                        ) + msg_to_log
 
         else:
             if monster_hit == '1':
@@ -379,6 +420,7 @@ class MonsterDeleteView(View):
     """Delete monsters view."""
 
     def get(self, request, *args, **kwargs):
+        """Get method of view."""
         monster_id = self.kwargs['monster_id']
 
         try:
