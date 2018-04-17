@@ -15,6 +15,14 @@
     <p><a href="" class="btn btn-info">Start game.</a></p>
 {% else %}
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <div class="row">
     <div class="col-sm-6 left-col">
         <h3>Monsters ({{monsters_count}}) and Objects ({{objects_count}})</h3>

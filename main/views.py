@@ -1,11 +1,10 @@
 """Board game calc views."""
 
 import random
-
 from django.shortcuts import (
     # render,
     redirect,
-    # get_object_or_404
+    get_list_or_404
 )
 # from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -19,10 +18,10 @@ from django.views.generic import (
     # DeleteView
 )
 # from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from main import forms
-
-# from main.helpers.common import find_value
-
+# from main.helpers.common import ITEMS_TYPES
+import main.models
 from main.models import (
     ArmorLootItem,
     GameLog,
@@ -32,6 +31,11 @@ from main.models import (
     WeaponLootItem,
 )
 
+ITEMS_TYPES = {
+    'wpn': 'WeaponLootItem',
+    'arm': 'ArmorLootItem',
+    'trn': 'TrinketLootItem',
+}
 
 def monster_delete(id):
     """Delete a monster by its ID."""
@@ -548,10 +552,36 @@ class ItemEquipView(TemplateView):
             except:
                 pass
 
-        # if there is equipped item of the same type, replace it
-
         if action == '1':
-            item.item_equipped = True
+
+            # if there is equipped item of the same type, DO NOTHING, show message
+            item_type = item.item_type
+
+            # limits for equipped items
+            if item_type == 'trn':
+                limit = 2
+            elif item_type == 'wpn':
+                limit = 1
+            else:
+                limit = 4
+
+            # custom filter
+            item_type_class = ITEMS_TYPES[item_type]
+            filter_key = item_type + "_owned_by"
+            owner_filter = {filter_key: player}
+
+            equipped_items = getattr(main.models, item_type_class).objects.filter(
+                item_equipped=True
+            ).filter(
+                **owner_filter
+            )
+
+            if len(equipped_items) >= limit:
+                messages.error(request, 'Take off equipped item first!')
+                return redirect('home')
+            else:
+                item.item_equipped = True
+
         else:
             item.item_equipped = False
         item.save()
@@ -582,7 +612,7 @@ class MainIndexView(TemplateView):
 #                      TODO
 ##################################################
 
-# 1. dry equip, drop, pass views
+# 1. dry drop, pass views
 # 2. write bonuses calculation funct. for equip, drop, pass
 
 ##################################################

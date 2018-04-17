@@ -1,5 +1,6 @@
-from django.db import models
+"""Main models."""
 
+from django.db import models
 from main.helpers.common import find_value
 
 
@@ -156,14 +157,14 @@ class LootItem(models.Model):
     item_dropped = models.BooleanField(default=False)
     item_equipped = models.BooleanField(default=False)
 
-    ITEM_TYPES = (
+    ITEM_CLASS = (
         ('wpn', 'weapon'),
         ('arm', 'armor'),
         ('trn', 'trinket'),
     )
     item_type = models.CharField(
-        choices=ITEM_TYPES,
-        default='na',
+        choices=ITEM_CLASS,
+        default='wpn',
         max_length=3
     )
 
@@ -387,14 +388,14 @@ class TrinketLootItem(LootItem):
         max_length=2
     )
 
-    trinket_owned_by = models.ForeignKey(
+    trn_owned_by = models.ForeignKey(
         PlayerCharacter,
         on_delete=models.SET_NULL,
         null=True,
         related_name='trinket_owned_by'
     )
 
-    trinket_found_by = models.ForeignKey(
+    trn_found_by = models.ForeignKey(
         PlayerCharacter,
         on_delete=models.SET_NULL,
         null=True,
