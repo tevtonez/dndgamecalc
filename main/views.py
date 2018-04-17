@@ -369,7 +369,7 @@ class CombatView(View):
                 if dies:
                     victim.knocked_down = True
                     victim.save()
-                    msg_to_log += '<p class="hero-hit">{} knocked down! Respawn in camp in 2 rounds.</p><br>'.format(victim)
+                    msg_to_log = '<p class="hero-hit">{} knocked down!<br>Respawn in camp in 2 rounds.</p>'.format(victim) + msg_to_log
 
             else:
                 if victim.character_race != 'bar':
@@ -389,7 +389,7 @@ class CombatView(View):
                     # generate loot item dropped
                     loot_item_drop = drop_item(attacker, victim)
                     if victim.character_race != 'bar':
-                        msg_to_log = '<p class="monster-hit">{} <strong>#{}</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
+                        msg_to_log = '<p class="monster-hit">{} <strong>#{}\</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
                             victim,
                             victim.name,
                             loot_item_drop
@@ -437,7 +437,8 @@ class MonsterDeleteView(View):
         game_log = get_game_log(1)
 
         if m:
-            msg_to_log = '<p class="neutral-msg">{} removed from the game board.</p>'.format(m_deleted)
+            msg_to_log = '<p class="neutral-msg">{} removed from the game \
+            board.</p>'.format(m_deleted)
             add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
@@ -458,7 +459,9 @@ class RespawnPlayer(View):
             # getting game log
             game_log = get_game_log(1)
 
-            msg_to_log = '<p class="monster-hit">{} respawned!</p>'.format(player)
+            msg_to_log = '<p class="monster-hit">{} respawned!</p>'.format(
+                player
+            )
             add_to_game_log(game_log, msg_to_log)
 
         except:
@@ -505,7 +508,10 @@ class ItemDropView(TemplateView):
         item.save()
 
         # adding event to the logger
-        msg_to_log = '<p class="neutral-msg">{} dropped {}</p>'.format(player.name, item)
+        msg_to_log = '<p class="neutral-msg">{} dropped {}</p>'.format(
+            player.name,
+            item
+        )
         add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
@@ -527,34 +533,25 @@ class ItemEquipView(TemplateView):
         if item_class == '1':
             try:
                 item = WeaponLootItem.objects.get(pk=item_id)
-                if action == '1':
-                    item.item_equipped = True
-                else:
-                    item.item_equipped = False
-
             except:
                 pass
 
         elif item_class == '2':
             try:
                 item = ArmorLootItem.objects.get(pk=item_id)
-                if action == '1':
-                    item.item_equipped = True
-                else:
-                    item.item_equipped = False
             except:
                 pass
 
         elif item_class == '3':
             try:
                 item = TrinketLootItem.objects.get(pk=item_id)
-                if action == '1':
-                    item.item_equipped = True
-                else:
-                    item.item_equipped = False
             except:
                 pass
 
+        if action == '1':
+            item.item_equipped = True
+        else:
+            item.item_equipped = False
         item.save()
 
         # adding event to the logger
