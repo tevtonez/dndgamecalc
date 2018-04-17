@@ -127,7 +127,8 @@ def gen_armor_item(level):
         item_material=rand_arm_material,
         modificator_positive=modificator_positive,
         modificator_negative=modificator_negative,
-        item_level=level
+        item_level=level,
+        item_type='arm'
     )
     armor_item.save()
 

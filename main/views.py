@@ -548,6 +548,8 @@ class ItemEquipView(TemplateView):
             except:
                 pass
 
+        # if there is equipped item of the same type, replace it
+
         if action == '1':
             item.item_equipped = True
         else:

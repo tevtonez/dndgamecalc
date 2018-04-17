@@ -156,6 +156,17 @@ class LootItem(models.Model):
     item_dropped = models.BooleanField(default=False)
     item_equipped = models.BooleanField(default=False)
 
+    ITEM_TYPES = (
+        ('wpn', 'weapon'),
+        ('arm', 'armor'),
+        ('trn', 'trinket'),
+    )
+    item_type = models.CharField(
+        choices=ITEM_TYPES,
+        default='na',
+        max_length=3
+    )
+
 
 class WeaponLootItem(LootItem):
     """Weapon class."""
