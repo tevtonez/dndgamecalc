@@ -93,3 +93,15 @@ hr{
 .inventory-item span{
     font-size: 16px;
 }
+
+
+/* MESSAGES */
+.messages li{
+    list-style: none;
+    padding: 5px;
+    margin-top: 0;
+    text-align: center;
+    background-color: red;
+    color: #fff;
+    font-size: 16px;
+}

@@ -4,7 +4,7 @@ import random
 from django.shortcuts import (
     # render,
     redirect,
-    get_list_or_404
+    # get_list_or_404
 )
 # from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -36,6 +36,7 @@ ITEMS_TYPES = {
     'arm': 'ArmorLootItem',
     'trn': 'TrinketLootItem',
 }
+
 
 def monster_delete(id):
     """Delete a monster by its ID."""
@@ -226,7 +227,9 @@ class MonsterCreateView(View):
             character_level = 1
             attack = 0
             monster = False
-            character_description = "An ordinary barrel people to use to store their stuff in.\nThis one is full of cobwebs and maybe some goods, you never know until you check..."
+            character_description = "An ordinary barrel people to use to store \
+their stuff in.\nThis one is full of cobwebs and maybe some goods, you never \
+know until you check..."
 
         # creating Skeleton lev.1
         elif monster_race == "ske1":
@@ -241,7 +244,11 @@ class MonsterCreateView(View):
             attack_range = 1
             attack_modifier = 0
             monster = True
-            character_description = "A walking skeleton, with some withered flesh on its bones.\nThe very appearance of this creation infuses an endless paralyzing horror in everyone who sees it. The chilling look of the empty eye sockets of the skeleton penetrates right into the soul, emptying it and depleting the strength of living beings."
+            character_description = "A walking skeleton, with some withered \
+flesh on its bones.\nThe very appearance of this creation infuses an endless \
+paralyzing horror in everyone who sees it. The chilling look of the empty eye \
+sockets of the skeleton penetrates right into the soul, emptying it and \
+depleting the strength of living beings."
 
         # creating Skeleton lev.2
         elif monster_race == "ske2":
@@ -256,7 +263,10 @@ class MonsterCreateView(View):
             attack_range = 1
             attack_modifier = 0
             monster = True
-            character_description = "A walking skeleton, with a rusty chipped sword with huge nicks here and there on its blade.\nThis fast and fierce monster inhabits the darkest levels of Skeleton cave where it has the most of the advantage by attacking adventurers from the dark."
+            character_description = "A walking skeleton, with a rusty chipped \
+sword with huge nicks here and there on its blade.\nThis fast and fierce \
+monster inhabits the darkest levels of Skeleton cave where it has the most of \
+the advantage by attacking adventurers from the dark."
 
         # creating Archer Skeleton lev.2
         elif monster_race == "ska":
@@ -271,7 +281,9 @@ class MonsterCreateView(View):
             attack_range = 5
             attack_modifier = 0
             monster = True
-            character_description = "A walking skeleton, with a strong bow.\nThis silent monster kills quickly with precise shots. Its victims never know what killed them."
+            character_description = "A walking skeleton, with a strong bow.\n\
+This silent monster kills quickly with precise shots. Its victims never know \
+what killed them."
 
         # creating Spider lev.1
         elif monster_race == "spd":
@@ -286,7 +298,9 @@ class MonsterCreateView(View):
             attack_range = 1
             attack_modifier = 0
             monster = True
-            character_description = "A shiny black fat spider with hairy paws.\nHis black, shining eyes are staring at you, and fluorescing in the dark poison is dripping from its fangs."
+            character_description = "A shiny black fat spider with hairy \
+paws.\nHis black, shining eyes are staring at you, and fluorescing in the \
+dark poison is dripping from its fangs."
 
         # creating Flying Spinner - the Boss
         elif monster_race == "fsp":
@@ -322,7 +336,8 @@ class MonsterCreateView(View):
         game_log = get_game_log(1)
 
         if m_created:
-            msg_to_log = '<p class="neutral-msg">{} #{} added to the game board.</p>'.format(m_created, m_created.name)
+            msg_to_log = '<p class="neutral-msg">{} #{} added to the game \
+board.</p>'.format(m_created, m_created.name)
             add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
@@ -361,7 +376,8 @@ class CombatView(View):
         if damage_dealt >= victim.armor:
 
             if monster_hit == '1':
-                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span><br>{0} #{1} dealt damage {2} {4}</p>'.format(
+                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span>\
+<br>{0} #{1} dealt damage {2} {4}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
                     attacker,
                     attacker.name,
@@ -373,11 +389,13 @@ class CombatView(View):
                 if dies:
                     victim.knocked_down = True
                     victim.save()
-                    msg_to_log = '<p class="hero-hit">{} knocked down!<br>Respawn in camp in 2 rounds.</p>'.format(victim) + msg_to_log
+                    msg_to_log = '<p class="hero-hit">{} knocked down!<br>\
+Respawn in camp in 2 rounds.</p>'.format(victim) + msg_to_log
 
             else:
                 if victim.character_race != 'bar':
-                    msg_to_log = '<p><span class="monster-hit">{0} <strong>#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
+                    msg_to_log = '<p><span class="monster-hit">{0} <strong>\
+#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
                         # find_value(attacker.RACE, attacker.character_race),
                         victim,
                         victim.name,
@@ -393,13 +411,16 @@ class CombatView(View):
                     # generate loot item dropped
                     loot_item_drop = drop_item(attacker, victim)
                     if victim.character_race != 'bar':
-                        msg_to_log = '<p class="monster-hit">{} <strong>#{}\</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
+                        msg_to_log = '<p class="monster-hit">{} <strong>#{}\
+</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
                             victim,
                             victim.name,
                             loot_item_drop
                         ) + msg_to_log
                     else:
-                        msg_to_log = '<p><span class="monster-hit">{} is destroyed!<br>Loot found: <i>{}</i></span><br>{} dealt damage {} {}</p></p><br>'.format(
+                        msg_to_log = '<p><span class="monster-hit">{} is \
+destroyed!<br>Loot found: <i>{}</i></span><br>{} dealt damage {} {}</p></p>\
+<br>'.format(
                             victim,
                             loot_item_drop,
                             attacker,
@@ -554,7 +575,8 @@ class ItemEquipView(TemplateView):
 
         if action == '1':
 
-            # if there is equipped item of the same type, DO NOTHING, show message
+            # if there is equipped item of the same type, DO NOTHING, show
+            # message
             item_type = item.item_type
 
             # limits for equipped items
@@ -570,14 +592,17 @@ class ItemEquipView(TemplateView):
             filter_key = item_type + "_owned_by"
             owner_filter = {filter_key: player}
 
-            equipped_items = getattr(main.models, item_type_class).objects.filter(
+            equipped_items = getattr(
+                main.models,
+                item_type_class
+            ).objects.filter(
                 item_equipped=True
             ).filter(
                 **owner_filter
             )
 
             if len(equipped_items) >= limit:
-                messages.error(request, 'Take off equipped item first!')
+                messages.error(request, 'Take equipped item off first !')
                 return redirect('home')
             else:
                 item.item_equipped = True
@@ -614,6 +639,6 @@ class MainIndexView(TemplateView):
 
 # 1. dry drop, pass views
 # 2. write bonuses calculation funct. for equip, drop, pass
-
+# 3. add image of the boss
 ##################################################
 ##################################################
