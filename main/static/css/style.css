@@ -86,6 +86,13 @@ hr{
 }
 
 .inventory{}
+.inventory-section{
+    margin-bottom: 10px;
+    padding: 5px;
+}
+.weapon-wrapper{background-color:#ffc6c6;}
+.armor-wrapper{background-color:#ffdfb8;}
+.trinket-wrapper{background-color:#b3dfff;}
 .inventory-item{
     font-size: 12px;
 }
