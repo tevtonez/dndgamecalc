@@ -206,6 +206,18 @@ def get_game_log(pk):
         return redirect('home')
 
 
+def get_item_type(item_class):
+    """Take string item_class and return string item_type."""
+    if item_class == '1':
+        item_type = 'wpn'
+    elif item_class == '2':
+        item_type = 'arm'
+    elif item_class == '3':
+        item_type = 'trn'
+
+    return item_type
+
+
 class SignUpView(CreateView):
     """Signup users view."""
 
@@ -545,7 +557,6 @@ class ItemDropView(TemplateView):
     Drop item from user inventory.
 
     Put off item automatically and remove item from user's inventory.
-    Put it back to items pool.
     """
 
     def get(self, request, *args, **kwargs):
@@ -556,31 +567,25 @@ class ItemDropView(TemplateView):
         item_class = self.kwargs['item_class']
         game_log = get_game_log(1)
 
-        if item_class == '1':
-            try:
-                item = WeaponLootItem.objects.get(pk=item_id)
-                item.wpn_owned_by = None
-                item.item_equipped = False
-            except:
-                pass
+        item_type = get_item_type(item_class)
 
-        elif item_class == '2':
-            try:
-                item = ArmorLootItem.objects.get(pk=item_id)
-                item.arm_owned_by = None
-                item.item_equipped = False
-            except:
-                pass
+        item_owned_by = item_type + "_owned_by"
+        custom_filter = {item_owned_by: None, 'item_equipped': False}
 
-        elif item_class == '3':
-            try:
-                item = TrinketLootItem.objects.get(pk=item_id)
-                item.trinket_owned_by = None
-                item.item_equipped = False
-            except:
-                pass
+        item = getattr(
+            main.models, ITEMS_TYPES[item_type]
+        ).objects.get(
+            pk=item_id
+        )
 
-        item.save()
+        getattr(
+            main.models, ITEMS_TYPES[item_type]
+        ).objects.filter(
+            pk=item_id
+        ).update(**custom_filter)
+
+        # calculating item bonus
+        calculate_bonuses(player)
 
         # adding event to the logger
         msg_to_log = '<p class="neutral-msg">{} dropped {}</p>'.format(
@@ -605,25 +610,13 @@ class ItemEquipView(TemplateView):
         game_log = get_game_log(1)
         equip_action = 'equipped' if action == '1' else 'put off'
 
-        if item_class == '1':
-            try:
-                item = WeaponLootItem.objects.get(pk=item_id)
-            except:
-                pass
+        item_type = get_item_type(item_class)
 
-        elif item_class == '2':
-            try:
-                item = ArmorLootItem.objects.get(pk=item_id)
-            except:
-                pass
-
-        elif item_class == '3':
-            try:
-                item = TrinketLootItem.objects.get(pk=item_id)
-            except:
-                pass
-
-        item_type = item.item_type
+        item = getattr(
+            main.models, ITEMS_TYPES[item_type]
+        ).objects.get(
+            pk=item_id
+        )
 
         # custom filter
         item_type_class = ITEMS_TYPES[item_type]
@@ -631,7 +624,6 @@ class ItemEquipView(TemplateView):
         owner_filter = {filter_key: player}
 
         if action == '1':
-
             # if there is equipped item of the same type, DO NOTHING, show
             # message
 
@@ -668,52 +660,6 @@ class ItemEquipView(TemplateView):
         # calculating item bonus
         calculate_bonuses(player)
 
-        # equiped_items_all = []
-
-        # for item_type in ITEMS_TYPES.keys():
-        #     filter_key = item_type + "_owned_by"
-        #     owner_filter = {filter_key: player}
-        #     equiped_items_all.extend(
-        #         [i for i in getattr(
-        #             main.models,
-        #             ITEMS_TYPES[item_type]
-        #         ).objects.filter(
-        #             item_equipped=True
-        #         ).filter(
-        #             **owner_filter
-        #         )]
-        #     )
-
-        # equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = equipped_attack_bonus = equipped_speed_bonus = 0
-
-        # for item in equiped_items_all:
-
-        #     try:
-        #         equipped_speed_bonus += int(item.modificator_negative)
-        #     except:
-        #         pass
-
-        #     if item.bonus_to == 'at':
-        #         equipped_attack_bonus += int(item.modificator_positive)
-        #     elif item.bonus_to == 'hp':
-        #         equipped_health_bonus += int(item.modificator_positive)
-        #     elif item.bonus_to == 'sp':
-        #         equipped_speed_bonus += int(item.modificator_positive)
-        #     elif item.bonus_to == 'ra':
-        #         equipped_range_bonus += int(item.modificator_positive)
-        #     elif item.bonus_to == 'ar':
-        #         equipped_armor_bonus += int(item.modificator_positive)
-
-        # player_data = {
-        #     'health': player.initial_health + equipped_health_bonus,
-        #     'armor': player.initial_armor + equipped_armor_bonus,
-        #     'attack_range': player.initial_attack_range + equipped_range_bonus,
-        #     'attack_modifier': player.initial_attack_modifier + equipped_attack_bonus,
-        #     'speed': player.initial_speed + equipped_speed_bonus,
-        # }
-
-        # PlayerCharacter.objects.filter(pk=player.id).update(**player_data)
-
         # adding event to the logger
         msg_to_log = '<p class="neutral-msg">{} {} {}</p>'.format(
             player.name,
@@ -740,8 +686,9 @@ class MainIndexView(TemplateView):
 #                      TODO
 ##################################################
 
-# 1. dry drop, pass views
-# 2. write bonuses calculation funct. for equip, drop, pass
+# 1. write give to another player view
+# 2. write bonuses calculation funct. for give to another player
 # 3. add image of the boss
+# 4. write trinkets gen
 ##################################################
 ##################################################
