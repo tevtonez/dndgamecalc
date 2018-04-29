@@ -18,9 +18,11 @@ from django.views.generic import (
     # DeleteView
 )
 # from django.contrib.auth.decorators import login_required
+# from django.db.models import Sum
+# from django.db.models.functions import Coalesce
 from django.contrib import messages
 from main import forms
-# from main.helpers.common import ITEMS_TYPES
+from main.helpers.common import ITEMS_TYPES
 import main.models
 from main.models import (
     ArmorLootItem,
@@ -30,12 +32,6 @@ from main.models import (
     TrinketLootItem,
     WeaponLootItem,
 )
-
-ITEMS_TYPES = {
-    'wpn': 'WeaponLootItem',
-    'arm': 'ArmorLootItem',
-    'trn': 'TrinketLootItem',
-}
 
 
 def monster_delete(id):
@@ -98,6 +94,55 @@ def calculate_damage(dices):
         dices_dealt.append(dice_damage)
 
     return resulting_damage, dices_dealt
+
+
+def calculate_bonuses(player):
+    """Calculating bonuses and penalties from equipped items."""
+    equiped_items_all = []
+
+    for item_type in ITEMS_TYPES.keys():
+        filter_key = item_type + "_owned_by"
+        owner_filter = {filter_key: player}
+        equiped_items_all.extend(
+            [i for i in getattr(
+                main.models,
+                ITEMS_TYPES[item_type]
+            ).objects.filter(
+                item_equipped=True
+            ).filter(
+                **owner_filter
+            )]
+        )
+
+    equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = equipped_attack_bonus = equipped_speed_bonus = 0
+
+    for item in equiped_items_all:
+
+        try:
+            equipped_speed_bonus -= int(item.modificator_negative)
+        except:
+            pass
+
+        if item.bonus_to == 'at':
+            equipped_attack_bonus += int(item.modificator_positive)
+        elif item.bonus_to == 'hp':
+            equipped_health_bonus += int(item.modificator_positive)
+        elif item.bonus_to == 'sp':
+            equipped_speed_bonus += int(item.modificator_positive)
+        elif item.bonus_to == 'ra':
+            equipped_range_bonus += int(item.modificator_positive)
+        elif item.bonus_to == 'ar':
+            equipped_armor_bonus += int(item.modificator_positive)
+
+    player_data = {
+        'health': player.initial_health + equipped_health_bonus,
+        'armor': player.initial_armor + equipped_armor_bonus,
+        'attack_range': player.initial_attack_range + equipped_range_bonus,
+        'attack_modifier': player.initial_attack_modifier + equipped_attack_bonus,
+        'speed': player.initial_speed + equipped_speed_bonus,
+    }
+
+    PlayerCharacter.objects.filter(pk=player.id).update(**player_data)
 
 
 def victim_dies(victim):
@@ -496,7 +541,12 @@ class RespawnPlayer(View):
 
 
 class ItemDropView(TemplateView):
-    """Drop item from user inventory."""
+    """
+    Drop item from user inventory.
+
+    Put off item automatically and remove item from user's inventory.
+    Put it back to items pool.
+    """
 
     def get(self, request, *args, **kwargs):
         """Process method GET."""
@@ -573,11 +623,17 @@ class ItemEquipView(TemplateView):
             except:
                 pass
 
+        item_type = item.item_type
+
+        # custom filter
+        item_type_class = ITEMS_TYPES[item_type]
+        filter_key = item_type + "_owned_by"
+        owner_filter = {filter_key: player}
+
         if action == '1':
 
             # if there is equipped item of the same type, DO NOTHING, show
             # message
-            item_type = item.item_type
 
             # limits for equipped items
             if item_type == 'trn':
@@ -586,11 +642,6 @@ class ItemEquipView(TemplateView):
                 limit = 1
             else:
                 limit = 4
-
-            # custom filter
-            item_type_class = ITEMS_TYPES[item_type]
-            filter_key = item_type + "_owned_by"
-            owner_filter = {filter_key: player}
 
             equipped_items = getattr(
                 main.models,
@@ -602,7 +653,10 @@ class ItemEquipView(TemplateView):
             )
 
             if len(equipped_items) >= limit:
-                messages.error(request, 'Take equipped item off first !')
+                messages.error(
+                    request,
+                    'Take off equipped item of the same class first!'
+                )
                 return redirect('home')
             else:
                 item.item_equipped = True
@@ -610,6 +664,55 @@ class ItemEquipView(TemplateView):
         else:
             item.item_equipped = False
         item.save()
+
+        # calculating item bonus
+        calculate_bonuses(player)
+
+        # equiped_items_all = []
+
+        # for item_type in ITEMS_TYPES.keys():
+        #     filter_key = item_type + "_owned_by"
+        #     owner_filter = {filter_key: player}
+        #     equiped_items_all.extend(
+        #         [i for i in getattr(
+        #             main.models,
+        #             ITEMS_TYPES[item_type]
+        #         ).objects.filter(
+        #             item_equipped=True
+        #         ).filter(
+        #             **owner_filter
+        #         )]
+        #     )
+
+        # equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = equipped_attack_bonus = equipped_speed_bonus = 0
+
+        # for item in equiped_items_all:
+
+        #     try:
+        #         equipped_speed_bonus += int(item.modificator_negative)
+        #     except:
+        #         pass
+
+        #     if item.bonus_to == 'at':
+        #         equipped_attack_bonus += int(item.modificator_positive)
+        #     elif item.bonus_to == 'hp':
+        #         equipped_health_bonus += int(item.modificator_positive)
+        #     elif item.bonus_to == 'sp':
+        #         equipped_speed_bonus += int(item.modificator_positive)
+        #     elif item.bonus_to == 'ra':
+        #         equipped_range_bonus += int(item.modificator_positive)
+        #     elif item.bonus_to == 'ar':
+        #         equipped_armor_bonus += int(item.modificator_positive)
+
+        # player_data = {
+        #     'health': player.initial_health + equipped_health_bonus,
+        #     'armor': player.initial_armor + equipped_armor_bonus,
+        #     'attack_range': player.initial_attack_range + equipped_range_bonus,
+        #     'attack_modifier': player.initial_attack_modifier + equipped_attack_bonus,
+        #     'speed': player.initial_speed + equipped_speed_bonus,
+        # }
+
+        # PlayerCharacter.objects.filter(pk=player.id).update(**player_data)
 
         # adding event to the logger
         msg_to_log = '<p class="neutral-msg">{} {} {}</p>'.format(

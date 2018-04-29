@@ -55,6 +55,12 @@ class PlayerCharacter(Character):
         max_length=3
     )
 
+    initial_health = models.IntegerField(default=4)
+    initial_armor = models.IntegerField(default=5)
+    initial_attack_modifier = models.IntegerField(default=4)
+    initial_attack_range = models.IntegerField(default=0)
+    initial_speed = models.IntegerField(default=5)
+
     def __str__(self):
         """Object string representation."""
         # return ' '.join([
@@ -195,7 +201,7 @@ class WeaponLootItem(LootItem):
         ('4', '4'),  # good        (level III)
         ('5', '5'),  # sharp       (level III)
     )
-    modificator = models.CharField(
+    modificator_positive = models.CharField(
         choices=WPN_MODIFS,
         default='0',
         max_length=3)
@@ -242,7 +248,9 @@ class WeaponLootItem(LootItem):
             '(' + str(
                 find_value(self.WPN_BONUS_TO, self.bonus_to)
             ).capitalize(),
-            '+' + str(find_value(self.WPN_MODIFS, self.modificator)) + ')'
+            '+' + str(
+                find_value(self.WPN_MODIFS, self.modificator_positive)
+            ) + ')'
         ])
 
 

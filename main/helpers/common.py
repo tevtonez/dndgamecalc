@@ -1,6 +1,13 @@
 """Common functions and classes."""
 
 ITEMS_LEVELS = [1, 2, 3]
+
+ITEMS_TYPES = {
+    'wpn': 'WeaponLootItem',
+    'arm': 'ArmorLootItem',
+    'trn': 'TrinketLootItem',
+}
+
 WEAPON_MOD_ZERO_VALUE_LIMIT = 5
 
 WEAPON_NAMES = (
