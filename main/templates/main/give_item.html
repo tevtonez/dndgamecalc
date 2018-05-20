@@ -1,0 +1,30 @@
+{% extends '../base.html' %}
+{% load static from staticfiles %}
+{% block body_block %}
+
+  <div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+      <div class="panel panel-default">
+        <div class="panel-body panel-give-item">
+
+          <h4>Give item {{item}} to:</h4>
+
+            {% for player in players %}
+                <a href="{% url 'main:transfer_item' item.pk 1 player.id %}">
+                    {% if player.name == 'Vincent' %}
+                        <img src="{% static "images/duke.png" %}" height="200" alt="">
+                    {% elif player.name == 'Dadrin' %}
+                        <img src="{% static "images/dadrin.png" %}" height="200" alt="">
+                    {% elif player.name == 'Idrill' %}
+                        <img src="{% static "images/idrill.png" %}" height="200" alt="">
+                    {% endif %}
+                </a>
+            {% endfor %}
+
+        </div>
+      </div>
+      <a href="{% url 'home' %}">Back to dashboard</a>
+    </div>
+  </div>
+
+{% endblock %}

@@ -7,6 +7,8 @@ from main.views import (
     RespawnPlayer,
     ItemDropView,
     ItemEquipView,
+    ItemGiveView,
+    ItemTransferView,
 )
 
 app_name = 'main'
@@ -49,5 +51,16 @@ urlpatterns = [
         r'^equip-item/(?P<player_id>\d*)/(?P<item_id>\d*)/(?P<item_class>\d*)/(?P<action>\d*)$',
         ItemEquipView.as_view(),
         name='equip_item'
+    ),
+    # give item to another player
+    url(
+        r'^give-item/(?P<item_id>\d*)/(?P<item_class>\d*)$',
+        ItemGiveView.as_view(),
+        name='give_item'
+    ),
+    url(
+        r'^give-item/(?P<item_id>\d*)/(?P<item_class>\d*)/(?P<player_id>\d*)$',
+        ItemTransferView.as_view(),
+        name='transfer_item'
     ),
 ]

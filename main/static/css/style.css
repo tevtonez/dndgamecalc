@@ -101,6 +101,10 @@ hr{
     font-size: 16px;
 }
 
+/* PANEL */
+.panel-give-item{
+    text-align: center;
+}
 
 /* MESSAGES */
 .messages li{

@@ -135,7 +135,7 @@
                                     <p class="inventory-item">{% if item.item_equipped %}<span class="fa fa-user-circle-o"></span>{% endif %} {{item}}
                                     <br>
                                     <a href="{% url 'main:drop_item' player.id item.pk 1 %}" title="Remove from inventory"><span class="fa fa-trash"></span></a>
-                                    <a href="# title="Give to another player""><span class="fa fa-external-link-square"></span></a>
+                                    <a href="{% url 'main:give_item' item.pk 1%}" title="Give to another player"><span class="fa fa-external-link-square"></span></a>
                                     <a href="{% if not item.item_equipped %}{% url 'main:equip_item' player.id item.pk 1 1%}{%else%}{% url 'main:equip_item' player.id item.pk 1 0%}{%endif%}" title="Equip/Unequip"><span class="fa fa-universal-access"></span></a></p><hr>
                                 {% endfor %}
                             {% else %}

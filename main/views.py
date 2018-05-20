@@ -672,6 +672,47 @@ class ItemEquipView(TemplateView):
         return redirect('home')
 
 
+class ItemGiveView(TemplateView):
+    """Select another player to give item from user inventory."""
+    template_name = 'main/give_item.html'
+
+    def get_context_data(self, **kwargs):
+        """get_context_data."""
+        context = super(ItemGiveView, self).get_context_data(**kwargs)
+
+        # getting players
+        try:
+            duke = PlayerCharacter.objects.get(name='Vincent')
+            dadrin = PlayerCharacter.objects.get(name='Dadrin')
+            idrill = PlayerCharacter.objects.get(name='Idrill')
+            context['players'] = [duke, dadrin, idrill]
+        except:
+            context['players'] = None
+            return context
+
+        item_id = kwargs.get('item_id')
+        item_class = kwargs.get('item_class')
+        item_type = get_item_type(item_class)
+
+        item = getattr(
+            main.models, ITEMS_TYPES[item_type]
+        ).objects.get(
+            pk=item_id
+        )
+
+        # filtering out item owner to not pass item to him
+        filter_key = item_type + "_owned_by"
+        context['players'].remove(getattr(item, filter_key))
+        context['item'] = item
+
+        return context
+
+
+class ItemTransferView(View):
+    """Give item to another user."""
+    pass
+
+
 class MainIndexView(TemplateView):
     """Nothing special about his view."""
 
