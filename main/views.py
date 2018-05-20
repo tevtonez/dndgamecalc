@@ -21,6 +21,8 @@ from django.views.generic import (
 # from django.db.models import Sum
 # from django.db.models.functions import Coalesce
 from django.contrib import messages
+from django.utils.safestring import mark_safe
+
 from main import forms
 from main.helpers.common import ITEMS_TYPES
 import main.models
@@ -114,7 +116,8 @@ def calculate_bonuses(player):
             )]
         )
 
-    equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = equipped_attack_bonus = equipped_speed_bonus = 0
+    equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = \
+        equipped_attack_bonus = equipped_speed_bonus = 0
 
     for item in equiped_items_all:
 
@@ -674,6 +677,7 @@ class ItemEquipView(TemplateView):
 
 class ItemGiveView(TemplateView):
     """Select another player to give item from user inventory."""
+
     template_name = 'main/give_item.html'
 
     def get_context_data(self, **kwargs):
@@ -703,6 +707,7 @@ class ItemGiveView(TemplateView):
         # filtering out item owner to not pass item to him
         filter_key = item_type + "_owned_by"
         context['players'].remove(getattr(item, filter_key))
+
         context['item'] = item
 
         return context
@@ -710,7 +715,49 @@ class ItemGiveView(TemplateView):
 
 class ItemTransferView(View):
     """Give item to another user."""
-    pass
+
+    def get(self, request, *args, **kwargs):
+        """Get method of the view."""
+        item_id = kwargs.get('item_id')
+        item_class = kwargs.get('item_class')
+        item_type = get_item_type(item_class)
+        filter_key = item_type + "_owned_by"
+
+        item = getattr(
+            main.models, ITEMS_TYPES[item_type]
+        ).objects.get(
+            pk=item_id
+        )
+
+        old_owner = getattr(item, filter_key)
+        new_owner = PlayerCharacter.objects.get(pk=kwargs.get('player_id'))
+
+        # take off item from the old owner and put to the new owner's inventory
+        item.item_equipped = False
+        setattr(item, filter_key, new_owner)
+        item.save()
+
+        # calculating bonuses for old owner
+        calculate_bonuses(old_owner)
+
+        # adding event to the logger
+        msg_to_log = '{} gave {} to {}.'.format(
+            old_owner,
+            item,
+            new_owner
+        )
+
+        game_log = get_game_log(1)
+        add_to_game_log(
+            game_log,
+            '<p class="neutral-msg">' + msg_to_log + '</p>'
+        )
+
+        messages.success(
+            request,
+            mark_safe(msg_to_log)
+        )
+        return redirect('home')
 
 
 class MainIndexView(TemplateView):
@@ -727,8 +774,8 @@ class MainIndexView(TemplateView):
 #                      TODO
 ##################################################
 
-# 1. write give to another player view
-# 2. write bonuses calculation funct. for give to another player
+# 1. DRY views
+# 2.
 # 3. add image of the boss
 # 4. write trinkets gen
 ##################################################

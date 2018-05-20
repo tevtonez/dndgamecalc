@@ -112,7 +112,13 @@ hr{
     padding: 5px;
     margin-top: 0;
     text-align: center;
-    background-color: red;
+    background-color: grey;
     color: #fff;
     font-size: 16px;
+}
+.messages li.success{
+    background-color: green;
+}
+.messages li.alert{
+    background-color: red;
 }
