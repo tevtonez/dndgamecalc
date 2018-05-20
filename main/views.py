@@ -775,8 +775,6 @@ class MainIndexView(TemplateView):
 ##################################################
 
 # 1. DRY views
-# 2.
-# 3. add image of the boss
-# 4. write trinkets gen
+# 2. write trinkets gen
 ##################################################
 ##################################################
