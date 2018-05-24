@@ -709,6 +709,7 @@ class ItemGiveView(TemplateView):
         context['players'].remove(getattr(item, filter_key))
 
         context['item'] = item
+        context['item_class'] = item_class
 
         return context
 

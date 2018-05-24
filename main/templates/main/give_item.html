@@ -10,7 +10,7 @@
           <h4>Give item {{item}} to:</h4>
 
             {% for player in players %}
-                <a href="{% url 'main:transfer_item' item.pk 1 player.id %}">
+                <a href="{% url 'main:transfer_item' item.pk item_class player.id %}">
                     {% if player.name == 'Vincent' %}
                         <img src="{% static "images/duke.png" %}" height="200" alt="">
                     {% elif player.name == 'Dadrin' %}
