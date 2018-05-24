@@ -1,7 +1,7 @@
 """Main models."""
 
 from django.db import models
-from main.helpers.common import find_value
+from main.helpers.common import find_value, TRN_MODIFS_POSITIVE, TRN_BONUSES_TO, TRN_NAMES
 
 
 class Character(models.Model):
@@ -361,35 +361,17 @@ class ArmorLootItem(LootItem):
 class TrinketLootItem(LootItem):
     """Trinkets class."""
 
-    TRN_NAMES = (
-        ('amu', 'amulet'),
-        ('rin', 'ring'),
-    )
     trinket_name = models.CharField(
         choices=TRN_NAMES,
         default='amu',
         max_length=3
     )
 
-    TRN_MODIFS_POSITIVE = (
-        ('0', '0'),  # broken   (level I)
-        ('1', '1'),  # cracked  (level I)
-        ('2', '2'),  # poor     (level II)
-        ('3', '3'),  # normal   (level II)
-        ('4', '4'),  # good     (level III)
-    )
     modificator_positive = models.CharField(
         choices=TRN_MODIFS_POSITIVE,
         default='0',
         max_length=1)
 
-    TRN_BONUSES_TO = (
-        ('at', 'attack'),
-        ('hp', 'health'),
-        ('sp', 'speed'),
-        ('ra', 'range'),
-        ('ar', 'armor'),
-    )
     bonus_to = models.CharField(
         choices=TRN_BONUSES_TO,
         default='ar',
@@ -414,7 +396,7 @@ class TrinketLootItem(LootItem):
         """Object string representation."""
         s_bonus_to = str(
             find_value(
-                self.TRN_BONUSES_TO,
+                TRN_BONUSES_TO,
                 self.bonus_to
             )
         ).capitalize()
@@ -422,24 +404,24 @@ class TrinketLootItem(LootItem):
             "Level " + str(
                 self.item_level
             ),
+            # str(
+            #     find_value(self.ITM_SIZES, self.item_size)
+            # ).capitalize(),
+            # str(
+            #     find_value(self.ITM_CONDS, self.item_condition)
+            # ).capitalize(),
+            # str(
+            #     find_value(self.ITM_MATERS, self.item_material)
+            # ).capitalize(),
             str(
-                find_value(self.ITM_SIZES, self.item_size)
-            ).capitalize(),
-            str(
-                find_value(self.ITM_CONDS, self.item_condition)
-            ).capitalize(),
-            str(
-                find_value(self.ITM_MATERS, self.item_material)
-            ).capitalize(),
-            str(
-                find_value(self.TRN_NAMES, self.trinket_name)
+                find_value(TRN_NAMES, self.trinket_name)
             ).capitalize(),
             'of ' + s_bonus_to,
             '(' + s_bonus_to,
             '+' +
             str(
                 find_value(
-                    self.TRN_MODIFS_POSITIVE,
+                    TRN_MODIFS_POSITIVE,
                     self.modificator_positive
                 )
             ) + ')'

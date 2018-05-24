@@ -26,6 +26,29 @@ ARMOR_NAMES = (
     ('shi'),
 )
 
+TRN_NAMES = (
+    ('amu', 'amulet'),
+    ('rin', 'ring'),
+)
+
+TRN_BONUSES_TO = (
+    ('at', 'attack'),
+    ('hp', 'health'),
+    ('sp', 'speed'),
+    ('ra', 'range'),
+    ('ar', 'armor'),
+)
+
+TRN_MODIFS_POSITIVE = (
+    # ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
+    ('6', '6'),
+)
+
 PLAYER_NAMES = ['Duke Vincent', 'Dadrin', 'Idrill']
 PLAYERS_RACES = ['hum', 'dwa', 'elf']
 MONSTER_RACES = [
