@@ -183,7 +183,7 @@ def drop_item(attacker, victim):
             loot_item.arm_owned_by = loot_item.arm_found_by = attacker
 
         elif type(loot_item).__name__ == 'TrinketLootItem':
-            loot_item.trinket_owned_by = loot_item.trinket_found_by = attacker
+            loot_item.trn_owned_by = loot_item.trn_found_by = attacker
 
         loot_item.save()
 
