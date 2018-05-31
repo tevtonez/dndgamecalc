@@ -38,7 +38,7 @@ def gen_weapon_item(
         weapon_name=rand_wp_name,
         item_condition=random.choice(wp_conditions),
         item_material=random.choice(wp_materials),
-        modificator=modifier,
+        modificator_positive=modifier,
         bonus_to=wp_bonus_to,
         item_level=level,
     )
