@@ -222,6 +222,29 @@ def get_item_type(item_class):
     return item_type
 
 
+def spider_appears():
+    """Define if spider appears after barrel is destroyed."""
+    if random.random() > 0.45:
+        monster_create(
+            x_times=1,
+            name='',
+            character_race='spd',
+            character_level=1,
+            health=2,
+            armor=8,
+            speed=2,
+            attack=2,  # 2d6
+            attack_range=1,
+            attack_modifier=0,
+            monster=True,
+            character_description="A shiny black fat spider with hairy \
+paws.\nHis black, shining eyes are staring at you, and fluorescing in the \
+dark poison is dripping from its fangs."
+        )
+        return True
+    return False
+
+
 class SignUpView(CreateView):
     """Signup users view."""
 
@@ -405,7 +428,11 @@ board.</p>'.format(m_created, m_created.name)
 
 
 class CombatView(View):
-    """Monster Attacks a Player view."""
+    """
+    Combat view.
+
+    monster_hit = '1' - means a monster attacks a player
+    """
 
     def get(self, request, *args, **kwargs):
         """Get method of view."""
@@ -488,6 +515,12 @@ destroyed!<br>Loot found: <i>{}</i></span><br>{} dealt damage {} {}</p></p>\
                             damage_dealt,
                             attack_dices,
                         ) + msg_to_log
+
+                        # generate spider from a barrel
+                        spider = spider_appears()
+                        if spider:
+                            msg_to_log = '<p><span class="spider">A spider \
+appears from the barrel!!!</span></p>' + msg_to_log
 
         else:
             if monster_hit == '1':
@@ -779,12 +812,3 @@ class MainIndexView(TemplateView):
 
 # def index(request):
 #     HttpResponse("hi there")
-
-
-##################################################
-#                      TODO
-##################################################
-
-# 1. DRY views
-##################################################
-##################################################

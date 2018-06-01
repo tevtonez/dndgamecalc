@@ -104,6 +104,11 @@ hr{
     font-size: 16px;
 }
 
+.spider{
+    font-weight: bold;
+    color: #e2680b;
+}
+
 /* PANEL */
 .panel-give-item{
     text-align: center;
