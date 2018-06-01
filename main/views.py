@@ -25,6 +25,7 @@ from django.utils.safestring import mark_safe
 
 from main import forms
 from main.helpers.common import ITEMS_TYPES
+from main.helpers.gen_game import reset_game
 import main.models
 from main.models import (
     ArmorLootItem,
@@ -202,7 +203,7 @@ def add_to_game_log(game_log, msg_to_log):
 def get_game_log(pk):
     """Take GameLog.pk and return GameLog object."""
     try:
-        game_log = GameLog.objects.get(pk=pk)
+        game_log = GameLog.objects.all().last()
         return game_log
     except:
         game_log = None
@@ -252,7 +253,7 @@ class IndexView(TemplateView):
 
         # getting log
         try:
-            game_log = GameLog.objects.get(pk=1)
+            game_log = GameLog.objects.all().last()
         except:
             game_log = None
 
@@ -758,6 +759,15 @@ class ItemTransferView(View):
             request,
             mark_safe(msg_to_log)
         )
+        return redirect('home')
+
+
+class ResetGame(View):
+    """Reset game."""
+
+    def get(self, request, *args, **kwargs):
+        """Get method."""
+        reset_game()
         return redirect('home')
 
 

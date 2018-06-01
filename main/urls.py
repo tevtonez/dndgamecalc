@@ -9,12 +9,20 @@ from main.views import (
     ItemEquipView,
     ItemGiveView,
     ItemTransferView,
+    ResetGame,
 )
 
 app_name = 'main'
 
 urlpatterns = [
     # url(r'^$', views.index, name='app_index'),
+
+    # reset game
+    url(
+        r'reset_game/$',
+        ResetGame.as_view(),
+        name='reset_game'
+    ),
 
     # creating monsters
     url(

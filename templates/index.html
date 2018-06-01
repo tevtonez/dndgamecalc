@@ -12,7 +12,7 @@
 
 {% if not players or not game_log%}
     <p>Please, start game first.</p>
-    <p><a href="" class="btn btn-info">Start game.</a></p>
+    <p><a href="{% url 'main:reset_game' %}" class="btn btn-info">Start game.</a></p>
 {% else %}
 
 {% if messages %}
@@ -25,52 +25,60 @@
 
 <div class="row">
     <div class="col-sm-6 left-col">
-        <h3>Monsters ({{monsters_count}}) and Objects ({{objects_count}})</h3>
-
-        <div class="col-sm-12" id="monsters-list">
-        {% for monster in monsters %}
-
-            <div class="col-sm-3 text-center">
-                <img src="static/images/{{monster.character_race}}{% if monster.character_race == 'ske' and monster.character_level == 2 %}-2{% endif %}.png" alt="" width="90" height="100">
+        <div class="log-wrapper col-sm-12">
+            <h3>Game Log:</h3>
+            <div id="log-display">
+                {{game_log.game_log|safe}}
             </div>
+        </div>
+        <div class="col-sm-12">
+            <h3>Monsters ({{monsters_count}}) and Objects ({{objects_count}})</h3>
 
-            <div class="col-sm-5">
-                <p>{{monster}} {% if monster.name != '' %}
-                    <strong>#{{monster.name}}</strong>
-                {% endif %} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
-                <p>AR: {{monster.armor}}{% if monster.monster %}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}{% endif %}</p>
-                <div class="monster-health">
-                    {% for _ in "x"|ljust:monster.health %}
-                        <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
-                    {% endfor %}
+            <div class="col-sm-12" id="monsters-list">
+            {% for monster in monsters %}
+
+                <div class="col-sm-3 text-center">
+                    <img src="static/images/{{monster.character_race}}{% if monster.character_race == 'ske' and monster.character_level == 2 %}-2{% endif %}.png" alt="" width="90" height="100">
                 </div>
-            </div>
 
-            <div class="col-sm-2 monster-attack">
-            {% if monster.character_race != 'bar' %}
-                {% for player in players  %}
-                    {% if not player.knocked_down %}
-                        <p><a href="{% url 'main:combat' attacker_id=monster.id victim_id=player.id monster_hit=1%}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> {{player}}</a></p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            </div>
-            <div class="col-sm-2 monster-attack">
-                {% for player in players  %}
-                    {% if not player.knocked_down %}
-                        <p><a href="{% url 'main:combat' attacker_id=player.id victim_id=monster.id monster_hit=0%}" title="Vincent attacks monster">{{player}} <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
-                    {% endif %}
-                {% endfor %}
+                <div class="col-sm-5">
+                    <p>{{monster}} {% if monster.name != '' %}
+                        <strong>#{{monster.name}}</strong>
+                    {% endif %} <a href="{% url 'main:delete_monster' monster_id=monster.id %}"><span class="fa fa-times-circle"></span></a></p>
+                    <p>AR: {{monster.armor}}{% if monster.monster %}, SP: {{monster.speed}}, AT: {{monster.attack}}d6{% if monster.attack_modifier > 0 %}+{% endif %}{% if monster.attack_modifier != 0 %}{{monster.attack_modifier}}{% endif %}{% endif %}</p>
+                    <div class="monster-health">
+                        {% for _ in "x"|ljust:monster.health %}
+                            <span class="fa fa-heart" style="font-size:16px;color:black;"></span>
+                        {% endfor %}
+                    </div>
+                </div>
 
-            </div>
+                <div class="col-sm-2 monster-attack">
+                {% if monster.character_race != 'bar' %}
+                    {% for player in players  %}
+                        {% if not player.knocked_down %}
+                            <p><a href="{% url 'main:combat' attacker_id=monster.id victim_id=player.id monster_hit=1%}" title="Monster attacks Vincent"><img src="{% static "images/bite.png" %}" alt="" width=24> {{player}}</a></p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                </div>
+                <div class="col-sm-2 monster-attack">
+                    {% for player in players  %}
+                        {% if not player.knocked_down %}
+                            <p><a href="{% url 'main:combat' attacker_id=player.id victim_id=monster.id monster_hit=0%}" title="Vincent attacks monster">{{player}} <img src="{% static "images/sword.png" %}" alt="" width=24></a></p>
+                        {% endif %}
+                    {% endfor %}
 
-            <div class="col-sm-12">
-                <hr>
-            </div>
+                </div>
 
-        {% empty %}
-            Add monsters using form down below
-        {% endfor %}
+                <div class="col-sm-12">
+                    <hr>
+                </div>
+
+            {% empty %}
+                Add monsters using form down below
+            {% endfor %}
+        </div>
         </div> <!-- monsters-list -->
 
         <div class="col-sm-12 add-monsters">
@@ -89,7 +97,11 @@
                 <p><a href="{% url 'main:generate_monster' monster_race='bar'  monster_number=1 %}">3 barrels</a></p>
                 <p><a href="{% url 'main:generate_monster' monster_race='fsp'  monster_number=1 %}">Flying Spinner</a></p>
             </div>
+            <div class="col-sm-12">
+                <a href="{% url 'main:reset_game' %}" class="btn btn-info">Start NEW game.</a>
+            </div>
         </div>
+
     </div>
     <div class="col-sm-6">
         <h3>Players:</h3>
@@ -181,13 +193,6 @@
             </div> <!-- player -->
             {% endfor %}
         </div> <!--  players-list -->
-        <div class="log-wrapper col-sm-12">
-            <h3>Game Log:</h3>
-            <div id="log-display">
-                {{game_log.game_log|safe}}
-            </div>
-        </div>
-
 
     </div>
 
