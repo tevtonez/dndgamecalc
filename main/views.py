@@ -99,6 +99,16 @@ def calculate_damage(dices):
     return resulting_damage, dices_dealt
 
 
+def calculate_player_hp(player, item, action):
+    """Calculate player HP points."""
+    if action == '1':
+        player.health += int(item.modificator_positive)
+    else:
+        player.health -= int(item.modificator_positive)
+
+    player.save()
+
+
 def calculate_bonuses(player):
     """Calculating bonuses and penalties from equipped items."""
     equiped_items_all = []
@@ -117,7 +127,7 @@ def calculate_bonuses(player):
             )]
         )
 
-    equipped_health_bonus = equipped_armor_bonus = equipped_range_bonus = \
+    equipped_armor_bonus = equipped_range_bonus = \
         equipped_attack_bonus = equipped_speed_bonus = 0
 
     for item in equiped_items_all:
@@ -129,8 +139,6 @@ def calculate_bonuses(player):
 
         if item.bonus_to == 'at':
             equipped_attack_bonus += int(item.modificator_positive)
-        elif item.bonus_to == 'hp':
-            equipped_health_bonus += int(item.modificator_positive)
         elif item.bonus_to == 'sp':
             equipped_speed_bonus += int(item.modificator_positive)
         elif item.bonus_to == 'ra':
@@ -139,7 +147,7 @@ def calculate_bonuses(player):
             equipped_armor_bonus += int(item.modificator_positive)
 
     player_data = {
-        'health_bonus': equipped_health_bonus,
+        # 'health_bonus': equipped_health_bonus,
         'armor': player.initial_armor + equipped_armor_bonus,
         'attack_range': player.initial_attack_range + equipped_range_bonus,
         'attack_modifier': player.initial_attack_modifier +
@@ -592,7 +600,18 @@ class RespawnPlayer(View):
         player_id = self.kwargs['player_id']
         try:
             player = PlayerCharacter.objects.get(id=player_id)
-            player.health = player.respawn_health
+
+            # looking for health bonus if any
+            health_bonus = 0
+            try:
+                trinkets = TrinketLootItem.objects.filter(trn_owned_by__id=player_id)
+                for trinket in trinkets:
+                    if trinket.bonus_to == 'hp':
+                        health_bonus += int(trinket.modificator_positive)
+            except:
+                pass
+
+            player.health = player.respawn_health + health_bonus
             player.knocked_down = False
             player.save()
 
@@ -715,6 +734,9 @@ class ItemEquipView(TemplateView):
         else:
             item.item_equipped = False
         item.save()
+
+        if item.bonus_to == 'hp':
+            calculate_player_hp(player, item, action)
 
         # calculating item bonus
         calculate_bonuses(player)

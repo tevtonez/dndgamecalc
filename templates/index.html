@@ -126,11 +126,6 @@
                                 {% endfor %}
                             {% endwith %}
 
-                            {% with ''|center:player.health_bonus as range %}
-                                {% for i in range %}
-                                    <span class="fa fa-heart"></span>
-                                {% endfor %}
-                            {% endwith %}
                         {% else %}
                             <a href="{% url 'main:respawn_player' player.id %}" class="btn btn-danger">Respawn <span class="fa fa-heartbeat"></span></a>
                         {% endif %}
