@@ -56,6 +56,7 @@ class PlayerCharacter(Character):
     )
 
     initial_health = models.IntegerField(default=4)
+    health_bonus = models.IntegerField(default=0)
     initial_armor = models.IntegerField(default=5)
     initial_attack_modifier = models.IntegerField(default=4)
     initial_attack_range = models.IntegerField(default=0)

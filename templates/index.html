@@ -120,9 +120,17 @@
 
                     <div class="player-health">
                         {% if not player.knocked_down %}
-                            {% for _ in "x"|rjust:player.health %}
-                                <span class="fa fa-heart"></span>
-                            {% endfor %}
+                            {% with ''|center:player.health as range %}
+                                {% for i in range %}
+                                    <span class="fa fa-heart"></span>
+                                {% endfor %}
+                            {% endwith %}
+
+                            {% with ''|center:player.health_bonus as range %}
+                                {% for i in range %}
+                                    <span class="fa fa-heart"></span>
+                                {% endfor %}
+                            {% endwith %}
                         {% else %}
                             <a href="{% url 'main:respawn_player' player.id %}" class="btn btn-danger">Respawn <span class="fa fa-heartbeat"></span></a>
                         {% endif %}

@@ -139,7 +139,7 @@ def calculate_bonuses(player):
             equipped_armor_bonus += int(item.modificator_positive)
 
     player_data = {
-        'health': player.initial_health + equipped_health_bonus,
+        'health_bonus': equipped_health_bonus,
         'armor': player.initial_armor + equipped_armor_bonus,
         'attack_range': player.initial_attack_range + equipped_range_bonus,
         'attack_modifier': player.initial_attack_modifier +
