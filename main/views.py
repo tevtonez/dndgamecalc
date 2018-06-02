@@ -1,6 +1,7 @@
 """Board game calc views."""
 
 import random
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import (
     # render,
     redirect,
@@ -236,7 +237,7 @@ def spider_appears():
     if random.random() > 0.45:
         monster_create(
             x_times=1,
-            name='',
+            name='spider from a barrel',
             character_race='spd',
             character_level=1,
             health=2,
@@ -460,108 +461,111 @@ class CombatView(View):
         # getting game log
         game_log = get_game_log(1)
 
-        if monster_hit == '1':
-            attacker = MonsterCharacter.objects.get(id=attacker_id)
-            victim = PlayerCharacter.objects.get(id=victim_id)
-        else:
-            attacker = PlayerCharacter.objects.get(id=attacker_id)
-            victim = MonsterCharacter.objects.get(id=victim_id)
-
-        attack_dices = attacker.attack
-
-        # getting damage value and dices' numbers
-        damage = calculate_damage(attack_dices)
-        damage_dealt = damage[0] + attacker.attack_modifier
-        attack_dices = damage[1]
-
-        # validating attack success
-        if damage_dealt >= victim.armor:
-
+        try:
             if monster_hit == '1':
-                msg_to_log = '<p><span class="fa fa-heart-o red"></span> <span \
-                             class="hero-hit">{3} looses 1HP!</span><br>{0} \
-                             #{1} dealt damage {2} {4}</p>'.format(
-                    # find_value(attacker.RACE, attacker.character_race),
-                    attacker,
-                    attacker.name,
-                    damage_dealt,
-                    victim,
-                    attack_dices,
-                )
-                dies = victim_dies(victim)
-                if dies:
-                    victim.knocked_down = True
-                    victim.save()
-                    msg_to_log = '<p class="hero-hit"><span class="fa \
-                    fa-heartbeat red"></span> {} knocked down!<br>\
-                    <span class="fa fa-clock-o red"></span> Respawn in camp \
-                    in 2 rounds.</p>'.format(victim) + msg_to_log
-
+                attacker = MonsterCharacter.objects.get(id=attacker_id)
+                victim = PlayerCharacter.objects.get(id=victim_id)
             else:
-                if victim.character_race != 'bar':
-                    msg_to_log = '<p><span class="monster-hit"><span class="\
-                                 fa fa-heart-o red"></span> {0} <strong>\
-                                 #{1}</strong> looses 1HP!</span><br><span \
-                                 class="no-style neutral-msg">{2} \
-                                 dealt damage {3} {4}</span></p>'.format(
+                attacker = PlayerCharacter.objects.get(id=attacker_id)
+                victim = MonsterCharacter.objects.get(id=victim_id)
+
+            attack_dices = attacker.attack
+
+            # getting damage value and dices' numbers
+            damage = calculate_damage(attack_dices)
+            damage_dealt = damage[0] + attacker.attack_modifier
+            attack_dices = damage[1]
+
+            # validating attack success
+            if damage_dealt >= victim.armor:
+
+                if monster_hit == '1':
+                    msg_to_log = '<p><span class="fa fa-heart-o red"></span> <span \
+                                 class="hero-hit">{3} looses 1HP!</span><br>{0} \
+                                 #{1} dealt damage {2} {4}</p>'.format(
                         # find_value(attacker.RACE, attacker.character_race),
-                        victim,
-                        victim.name,
                         attacker,
+                        attacker.name,
                         damage_dealt,
+                        victim,
                         attack_dices,
                     )
-                # checking victim's previous health
-                dies = victim_dies(victim)
-                if dies:
-                    victim.delete()
+                    dies = victim_dies(victim)
+                    if dies:
+                        victim.knocked_down = True
+                        victim.save()
+                        msg_to_log = '<p class="hero-hit"><span class="fa \
+                        fa-heartbeat red"></span> {} knocked down!<br>\
+                        <span class="fa fa-clock-o red"></span> Respawn in camp \
+                        in 2 rounds.</p>'.format(victim) + msg_to_log
 
-                    # generate loot item dropped
-                    loot_item_drop = drop_item(attacker, victim)
-
-                    # forming loot part of log message
-                    if loot_item_drop:
-                        log_text_monster_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot dropped {}</i></strong></p>'.format(loot_item_drop)
-                        log_text_barrel_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot found: {}</i></span></p>'.format(loot_item_drop)
-                    else:
-                        log_text_monster_drop_loot = ''
-                        log_text_barrel_drop_loot = ''
-
-                    # making log
+                else:
                     if victim.character_race != 'bar':
-                        msg_to_log = '<p class="monster-hit"><span class="fa \
-                        fa-window-close-o"></span> {} <strong>#{}</strong> \
-                        dies</p>'.format(
+                        msg_to_log = '<p><span class="monster-hit"><span class="\
+                                     fa fa-heart-o red"></span> {0} <strong>\
+                                     #{1}</strong> looses 1HP!</span><br><span \
+                                     class="no-style neutral-msg">{2} \
+                                     dealt damage {3} {4}</span></p>'.format(
+                            # find_value(attacker.RACE, attacker.character_race),
                             victim,
                             victim.name,
-                        ) + log_text_monster_drop_loot + msg_to_log
-                    else:
-                        msg_to_log = '<p class="monster-hit"><span class="fa \
-                        fa-window-close-o"></span> Barrel is destroyed!<br>\
-                        <span class="no-style neutral-msg">{} dealt damage {} \
-                        {}</span></p>'.format(
                             attacker,
                             damage_dealt,
                             attack_dices,
-                        ) + log_text_barrel_drop_loot + msg_to_log
+                        )
+                    # checking victim's previous health
+                    dies = victim_dies(victim)
+                    if dies:
+                        victim.delete()
 
-                        # generate spider from a barrel
-                        spider = spider_appears()
-                        if spider:
-                            msg_to_log = '<p><span class="spider"><span class="fa fa-bug"></span> A spider \
-appears from the barrel!!!</span></p>' + msg_to_log
+                        # generate loot item dropped
+                        loot_item_drop = drop_item(attacker, victim)
 
-        else:
-            if monster_hit == '1':
-                attacker_display_name = str(attacker) + \
-                    " <strong>#" + str(attacker.name) + "</strong>"
+                        # forming loot part of log message
+                        if loot_item_drop:
+                            log_text_monster_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot dropped {}</i></strong></p>'.format(loot_item_drop)
+                            log_text_barrel_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot found: {}</i></span></p>'.format(loot_item_drop)
+                        else:
+                            log_text_monster_drop_loot = ''
+                            log_text_barrel_drop_loot = ''
+
+                        # making log
+                        if victim.character_race != 'bar':
+                            msg_to_log = '<p class="monster-hit"><span class="fa \
+                            fa-window-close-o"></span> {} <strong>#{}</strong> \
+                            dies</p>'.format(
+                                victim,
+                                victim.name,
+                            ) + log_text_monster_drop_loot + msg_to_log
+                        else:
+                            msg_to_log = '<p class="monster-hit"><span class="fa \
+                            fa-window-close-o"></span> Barrel is destroyed!<br>\
+                            <span class="no-style neutral-msg">{} dealt damage {} \
+                            {}</span></p>'.format(
+                                attacker,
+                                damage_dealt,
+                                attack_dices,
+                            ) + log_text_barrel_drop_loot + msg_to_log
+
+                            # generate spider from a barrel
+                            spider = spider_appears()
+                            if spider:
+                                msg_to_log = '<p><span class="spider"><span class="fa fa-bug"></span> A spider \
+    appears from the barrel!!!</span></p>' + msg_to_log
+
             else:
-                attacker_display_name = attacker
+                if monster_hit == '1':
+                    attacker_display_name = str(attacker) + \
+                        " <strong>#" + str(attacker.name) + "</strong>"
+                else:
+                    attacker_display_name = attacker
 
-            msg_to_log = '<p>{} misses...</p>'.format(
-                attacker_display_name
-            )
-        add_to_game_log(game_log, msg_to_log)
+                msg_to_log = '<p>{} misses...</p>'.format(
+                    attacker_display_name
+                )
+            add_to_game_log(game_log, msg_to_log)
+        except ObjectDoesNotExist:
+            pass
 
         return redirect('home')
 
