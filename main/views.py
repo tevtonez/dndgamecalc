@@ -142,7 +142,8 @@ def calculate_bonuses(player):
         'health': player.initial_health + equipped_health_bonus,
         'armor': player.initial_armor + equipped_armor_bonus,
         'attack_range': player.initial_attack_range + equipped_range_bonus,
-        'attack_modifier': player.initial_attack_modifier + equipped_attack_bonus,
+        'attack_modifier': player.initial_attack_modifier +
+        equipped_attack_bonus,
         'speed': player.initial_speed + equipped_speed_bonus,
     }
 
@@ -189,7 +190,7 @@ def drop_item(attacker, victim):
         loot_item.save()
 
     else:
-        loot_item = "None"
+        loot_item = None
 
     return loot_item
 
@@ -420,9 +421,14 @@ dark poison is dripping from its fangs."
         game_log = get_game_log(1)
 
         if m_created:
-            msg_to_log = '<p class="neutral-msg">{} #{} added to the game \
-board.</p>'.format(m_created, m_created.name)
-            add_to_game_log(game_log, msg_to_log)
+            if race != 'bar':
+                msg_to_log = '<p class="neutral-msg">{} #{} added to the game\
+.</p>'.format(m_created, m_created.name)
+                add_to_game_log(game_log, msg_to_log)
+            else:
+                msg_to_log = '<p class="neutral-msg">{} barrels added to the \
+game.</p>'.format(x_times)
+                add_to_game_log(game_log, msg_to_log)
 
         return redirect('home')
 
@@ -464,8 +470,9 @@ class CombatView(View):
         if damage_dealt >= victim.armor:
 
             if monster_hit == '1':
-                msg_to_log = '<p><span class="hero-hit">{3} looses 1HP!</span>\
-<br>{0} #{1} dealt damage {2} {4}</p>'.format(
+                msg_to_log = '<p><span class="fa fa-heart-o red"></span> <span \
+                             class="hero-hit">{3} looses 1HP!</span><br>{0} \
+                             #{1} dealt damage {2} {4}</p>'.format(
                     # find_value(attacker.RACE, attacker.character_race),
                     attacker,
                     attacker.name,
@@ -477,13 +484,18 @@ class CombatView(View):
                 if dies:
                     victim.knocked_down = True
                     victim.save()
-                    msg_to_log = '<p class="hero-hit">{} knocked down!<br>\
-Respawn in camp in 2 rounds.</p>'.format(victim) + msg_to_log
+                    msg_to_log = '<p class="hero-hit"><span class="fa \
+                    fa-heartbeat red"></span> {} knocked down!<br>\
+                    <span class="fa fa-clock-o red"></span> Respawn in camp \
+                    in 2 rounds.</p>'.format(victim) + msg_to_log
 
             else:
                 if victim.character_race != 'bar':
-                    msg_to_log = '<p><span class="monster-hit">{0} <strong>\
-#{1}</strong> looses 1HP!</span><br>{2} dealt damage {3} {4}</p>'.format(
+                    msg_to_log = '<p><span class="monster-hit"><span class="\
+                                 fa fa-heart-o red"></span> {0} <strong>\
+                                 #{1}</strong> looses 1HP!</span><br><span \
+                                 class="no-style neutral-msg">{2} \
+                                 dealt damage {3} {4}</span></p>'.format(
                         # find_value(attacker.RACE, attacker.character_race),
                         victim,
                         victim.name,
@@ -498,28 +510,37 @@ Respawn in camp in 2 rounds.</p>'.format(victim) + msg_to_log
 
                     # generate loot item dropped
                     loot_item_drop = drop_item(attacker, victim)
+
+                    # forming loot part of log message
+                    if loot_item_drop:
+                        log_text_monster_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot dropped {}</i></strong></p>'.format(loot_item_drop)
+                        log_text_barrel_drop_loot = '<p class="monster-hit no-margin"><i><span class="fa fa-gift"></span> Loot found: {}</i></span></p>'.format(loot_item_drop)
+                    else:
+                        log_text_monster_drop_loot = ''
+                        log_text_barrel_drop_loot = ''
+
+                    # making log
                     if victim.character_race != 'bar':
-                        msg_to_log = '<p class="monster-hit">{} <strong>#{}\
-</strong> dies, dropping loot <i>{}</i></strong></p>'.format(
+                        msg_to_log = '<p class="monster-hit"><span class="fa \
+                        fa-window-close-o"></span> {} <strong>#{}</strong> \
+                        dies</p>'.format(
                             victim,
                             victim.name,
-                            loot_item_drop
-                        ) + msg_to_log
+                        ) + log_text_monster_drop_loot + msg_to_log
                     else:
-                        msg_to_log = '<p><span class="monster-hit">{} is \
-destroyed!<br>Loot found: <i>{}</i></span><br>{} dealt damage {} {}</p></p>\
-<br>'.format(
-                            victim,
-                            loot_item_drop,
+                        msg_to_log = '<p class="monster-hit"><span class="fa \
+                        fa-window-close-o"></span> Barrel is destroyed!<br>\
+                        <span class="no-style neutral-msg">{} dealt damage {} \
+                        {}</span></p>'.format(
                             attacker,
                             damage_dealt,
                             attack_dices,
-                        ) + msg_to_log
+                        ) + log_text_barrel_drop_loot + msg_to_log
 
                         # generate spider from a barrel
                         spider = spider_appears()
                         if spider:
-                            msg_to_log = '<p><span class="spider">A spider \
+                            msg_to_log = '<p><span class="spider"><span class="fa fa-bug"></span> A spider \
 appears from the barrel!!!</span></p>' + msg_to_log
 
         else:
@@ -578,7 +599,8 @@ class RespawnPlayer(View):
             # getting game log
             game_log = get_game_log(1)
 
-            msg_to_log = '<p class="monster-hit">{} respawned!</p>'.format(
+            msg_to_log = '<p class="monster-hit"><span class="fa fa-heartbeat">\
+            </span> {} respawned!</p>'.format(
                 player
             )
             add_to_game_log(game_log, msg_to_log)

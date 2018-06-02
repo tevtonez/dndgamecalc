@@ -82,6 +82,21 @@ hr{
     animation-iteration-count: infinite;
 }
 
+.no-margin{
+    margin: 2px 0;
+    top: -10px;
+    position: relative;
+}
+
+.no-style{
+    font-size: 14px;
+    font-weight: initial;
+}
+
+.red{
+    color: red;
+}
+
 @keyframes loot_item_anim{
     0% {color: #09a509;}
     33% {color: #ffb501;}
