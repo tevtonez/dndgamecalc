@@ -295,6 +295,7 @@ class IndexView(TemplateView):
         context['monsters'] = monsters_list
         context['monsters_count'] = len(monsters_list.filter(monster=True))
         context['objects_count'] = len(monsters_list.filter(monster=False))
+        context['page_title'] = 'Dashboard'
 
         return context
 
@@ -764,7 +765,12 @@ class ItemGiveView(TemplateView):
 
     def get_context_data(self, **kwargs):
         """get_context_data."""
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+    def get_context_data(self, **kwargs):
+        """get_context_data."""
         context = super(ItemGiveView, self).get_context_data(**kwargs)
+        context['page_title'] = 'Give item to another player'
 
         # getting players
         try:
